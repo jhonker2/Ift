@@ -13,6 +13,7 @@ use SimpleXMLElement;
 
 class SoapController extends Controller
 {   
+    const WSDL_CACHE_NONE = 0;
     public function sincronizarLecturasSoap(Request $request)
     {
         $data = $request->only(['lectura', 'numero_cuenta', 'id_usuario', 'soapwhrite', 'soapread', 'estado']);
@@ -507,14 +508,18 @@ public function check(Request $request)
 
                 if ($user->id_rol == 'ROL_PL_SIGOP' || $user->id_rol == 'ROL_DESA') {
                     $rolSigopEncontrado = true;
+                    $r->session()->put('SESSION_ROL', $user->id_rol);
                 }
+            }else{
+                return response()->json(["message" => "Contraseña no es valida"], 401);
+
             }
         }
 
         if ($rolSigopEncontrado) {
-            return response()->json(["message" => "Bienvenido", "redirectUrl" => route('home')]);
+            return response()->json(["message" => "Bienvenido", "redirectUrl" => 'home']);
         } else {
-            return response()->json(["message" => "Bienvenido", "redirectUrl" => route('index2')]);
+            return response()->json(["message" => "Bienvenido", "redirectUrl" => 'index2']);
         }
     } else {
         return response()->json(["message" => "Usuario no encontrado"], 401);

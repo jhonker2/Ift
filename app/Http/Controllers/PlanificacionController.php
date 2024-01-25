@@ -25,7 +25,7 @@ class PlanificacionController extends Controller
 
 
         // Pasar los procesos y los datos de la sesión a la vista
-        return view('Tramite.index', compact('procesos', 'campos'));
+        return view('Sigop.Tramite.index', compact('procesos', 'campos'));
     }
     public function index2()
     {  
@@ -44,7 +44,7 @@ class PlanificacionController extends Controller
 
 
         // Pasar los procesos y los datos de la sesión a la vista
-        return view('Tramite.homeU', compact('procesos', 'usuarioSesion', 'campos'));
+        return view('Sigop.Tramite.homeU', compact('procesos', 'usuarioSesion', 'campos'));
     }
     
     public function showForm($idProceso)
@@ -61,7 +61,7 @@ class PlanificacionController extends Controller
         ];
 
         // Pasar los procesos y los datos de la sesión a la vista
-        return view('Tramite.Tareas', compact('detalles','procesos', 'usuarioSesion', 'campos'));
+        return view('Sigop.Tramite.Tareas', compact('detalles','procesos', 'usuarioSesion', 'campos'));
     }
     
 
@@ -78,7 +78,7 @@ class PlanificacionController extends Controller
         ];
 
         // Pasar los procesos y los datos de la sesión a la vista
-        return view('Tramite.Tareas', compact('procesos', 'usuarioSesion','campos'));
+        return view('Sigop.Tramite.Tareas', compact('procesos', 'usuarioSesion','campos'));
     }
 
     public function guardarProcesoEnSesion(Request $request, $procesoId)
@@ -104,7 +104,7 @@ public function proceso($id_compromiso)
 
 
 
-    return view('Tramite.proceso', compact('fuentes','tiposTramite', 'procesos', 'campos'));
+    return view('Sigop.Tramite.proceso', compact('fuentes','tiposTramite', 'procesos', 'campos'));
 
 }
 public function mistramites()
@@ -115,7 +115,7 @@ public function mistramites()
         $procesos = TabProceso::where('estado', 'ACTIVO')->get();
         // Obtener los datos de la sesión
         // Pasar los procesos y los datos de la sesión a la vista
-        return view('Tramite.interfaces.mistramites', compact('procesos', 'campos'));
+        return view('Sigop.Tramite.interfaces.mistramites', compact('procesos', 'campos'));
     }
     public function mensajeria2()
     {    $datosSesion = session()->all();
@@ -125,7 +125,7 @@ public function mistramites()
         $procesos = TabProceso::where('estado', 'ACTIVO')->get();
         // Obtener los datos de la sesión
         // Pasar los procesos y los datos de la sesión a la vista
-        return view('Tramite.mensajeria', compact('procesos', 'campos'));
+        return view('Sigop.Tramite.mensajeria', compact('procesos', 'campos'));
     }
    // En tu controlador de autenticación
   public function obtenerClave($clave)
@@ -168,7 +168,7 @@ public function mistramites()
     public function fuente(Request $request){
         $descripcion = $request->only(['inputSolicitante']);
 
-        return view('Tramite.fuente');
+        return view('Sigop.Tramite.fuente');
     }
 
    
@@ -188,7 +188,7 @@ public function mistramites()
         ];
 
         // Pasar los procesos y los datos de la sesión a la vista
-        return view('Tramite.interfaces.notifi', compact('procesos', 'usuarioSesion'));
+        return view('Sigop.Tramite.interfaces.notifi', compact('procesos', 'usuarioSesion'));
     }
     
 
@@ -207,7 +207,7 @@ public function mistramites()
         ];
 
         // Pasar los procesos y los datos de la sesión a la vista
-        return view('Tramite.interfaces.mensajeria', compact('procesos', 'usuarioSesion'));
+        return view('Sigop.Tramite.interfaces.mensajeria', compact('procesos', 'usuarioSesion'));
     }
     public function proceso2()
     {    $datosSesion = session()->all();
@@ -224,18 +224,18 @@ public function mistramites()
         ];
 
         // Pasar los procesos y los datos de la sesión a la vista
-        return view('Tramite.proceso', compact('procesos', 'usuarioSesion'));
+        return view('Sigop.Tramite.proceso', compact('procesos', 'usuarioSesion'));
     }
     public function plantillanotificacion(){
-        return view('Tramite.PlantillaNotificacion');
+        return view('Sigop.Tramite.PlantillaNotificacion');
     }
 
     public function caminos(){
-        return view('Tramite.Caminos');
+        return view('Sigop.Tramite.Caminos');
     }
 
     public function entregable(){
-        return view('Tramite.Entregable');
+        return view('Sigop.Tramite.Entregable');
     }
 
     public function base(){ //REVISANDO..................................
@@ -251,7 +251,12 @@ public function mistramites()
             'nombre_corto' => session('nombre_corto'),
             'descripcion' => session('descripcion')
         ];
-        return view('Tramite.base', ['tareas'=>view('Tramite.Tareas')], compact('procesos', 'usuarioSesion'));
+        return view('Sigop.Tramite.base', ['tareas'=>view('Tramite.Tareas')], compact('procesos', 'usuarioSesion'));
+    }
+
+
+    public function login(){
+        return view('Sigop.login');
     }
   
 }

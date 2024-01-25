@@ -95,8 +95,7 @@ Route::get('loginle', function () {return view('login.loginlecto');});
 Route::get('/callSoapApiD/{clave}', [SoapController::class, 'callSoapApiD'])->name('callSoapApiD');
 Route::get('/getClave/{clave}', [SoapController::class, 'callSoapApi'])->name('callSoapApi');
 
-/*Route::post('/loginingresar2', [SoapController::class, 'autenticacionWeb'])->name('autenticacionWeb');
-Route::post('/loginlecto', [SoapController::class, 'autenticacionWeb2'])->name('autenticacionWeb2');*/
+Route::post('/loginlecto', [SoapController::class, 'autenticacionWeb2'])->name('autenticacionWeb2');
 
 Route::get('facturas_datos', [ControllersMonitoreo::class, 'facturas_datos'])->name('facturas_datos');
 Route::get('facturas_reales', [ControllersMonitoreo::class, 'facturas_reales'])->name('facturas_reales');
@@ -120,7 +119,6 @@ Route::get('/guardar-proceso-en-sesion/{proceso}', [PlanificacionController::cla
 // Rutas dentro de web.php
 //bloqueo 
 //Route::middleware(['blockeplani'])->group(function () {
-    Route::get('/home', [PlanificacionController::class, 'index']);
     Route::get('facturas_datos', [ControllersMonitoreo::class, 'facturas_datos'])->name('facturas_datos');
 //});
 Route::middleware(['blocke'])->group(function () {
@@ -146,7 +144,10 @@ Route::get('/get_total_ejecutas',[ControllersMonitoreo::class, 'get_ejecutadas']
 /***********/
 /**SIGOP***/
 
-Route::get('login', function () {return view('Sigop.login');});
+Route::get('login',[PlanificacionController::class, 'login']);
+Route::post('/loginingresar2', [SoapController::class, 'autenticacionWeb'])->name('autenticacionWeb');
+Route::get('home', [PlanificacionController::class, 'index']);
+
 
 Route::get('/mensajeria2', [PlanificacionController::class, 'mensajeria2'])->name('mensajeria2');; // Usa la sintaxis de array para referenciar el método del controlador
 Route::get('/mistramites', [PlanificacionController::class, 'mistramites'])->name('mistramites');; // Usa la sintaxis de array para referenciar el método del controlador
