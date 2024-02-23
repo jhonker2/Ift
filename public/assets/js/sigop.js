@@ -1,6 +1,11 @@
 const show_modal = (modal) => {
     $("#" + modal).modal('show');
 }
+
+const abrir_tramite = (id) =>{
+    _AJAX_('get_tareas_tramites/'+id,'GET','','',2);
+}
+
 const _AJAX_ = (ruta, tipo, token, datos, p) =>{
     if (tipo == "POST") {
         $.ajax({
@@ -138,6 +143,33 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
                         $("#div_fuentes").html(ht);
                     }
                     $("#tbl_fuentes").DataTable();
+                }else if(p==2){
+                    let html = "";
+                    let id_tramite=0;
+                    $(res).each(function (i, data) {
+                        html+='<tr><th scope="row">'+data.id+'</th>'
+                        html+='<td>'+data.tarea+'</td>'
+                        html+='<td>'+data.fecha_ejecucion+'</td>'
+                        if(isNaN(data.fecha_fin)){
+                            html+='<td>'+data.fecha_fin+'</td>'
+                        }else{
+                            html+='<td></td>'
+                        }
+                        html+='<td>'+data.empleado+'</td>'
+                        if(data.estado=='A'){
+                            html+='<td>REASIGNADO</td>'
+                        }else if(data.estado=='P'){
+                            html+='<td>PROCESADO</td>'
+                        }else if(data.estado=='E'){
+                            html+='<td> <a href="/proceso/'+data.id_proceso+'/'+data.id_tarea+'/'+data.id_tramite+'">EJECUCIÓN</a></td>'
+                        }
+                        html+='</tr>'
+                        id_tramite = data.id_tramite;
+                    });
+                    $("#body_c").html(html)
+                    $("#id_tramite").html(id_tramite);
+                    show_modal('modal_tarea_tramite');// modal de tareas tramites
+
                 }
             },
         }).fail(function (jqXHR, textStatus, errorthrown) {

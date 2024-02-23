@@ -188,3 +188,5 @@ Route::get('get_tipos_fuentes', [PlanificacionController::class, 'get_tipos_fuen
 /**COMPROMISOS */
 
 Route::post('store/compromisos', [PlanificacionController::class, 'store_compromisos']);
+Route::get('get_tareas_tramites/{id}', [PlanificacionController::class, 'tarea_tramites']);
+Route::get('proceso/{proceso}/{tarea}/{tramite}', [PlanificacionController::class, 'FRM_COMPROMISO']);

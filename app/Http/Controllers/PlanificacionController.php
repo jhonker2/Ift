@@ -28,9 +28,9 @@ class PlanificacionController extends Controller
         if (Session::get('SESSION_CEDULA')) {
             Session::put('SESSION_PAGE', 'Home');
 
-            $completados = DB::select('select count(*) as total from tbl_compromisos  where estado=2');
-            $ejecucion = DB::select('select count(*) as total from tbl_compromisos  where estado=1');
-            $compromisos = DB::select('SELECT c.id, f.descripcion, tf.descripcion, "dias_retrasado" ,c.fecha_inicio,c.responsable, "empleado","cargo", c.fecha_fin, c.descripcion, c.estado FROM tbl_compromisos c
+            $completados = DB::select('select count(*) as total from tbl_tramites  where estado=2');
+            $ejecucion = DB::select('select count(*) as total from tbl_tramites  where estado=1');
+            $compromisos = DB::select('SELECT c.id, f.descripcion, tf.descripcion, "dias_retrasado" ,c.fecha_inicio,c.responsable, "empleado","cargo", c.fecha_fin, c.descripcion, c.estado FROM tbl_tramites c
             INNER JOIN tbl_fuentes f on f.id= c.id_fuente
             INNER JOIN tbl_tipos_fuentes tf on tf.id = c.id_tipo_fuente');
 
@@ -413,7 +413,7 @@ class PlanificacionController extends Controller
 
         $fechaf = new Carbon($r->fecha_fin);
         // return $fechaf;
-        $fuentes = DB::table('tbl_compromisos')->insertGetId([
+        $fuentes = DB::table('tbl_tramites')->insertGetId([
             'id_fuente' => $r->fuente,
             'id_tipo_fuente' => $r->tipo,
             'fecha_inicio' => $date,
@@ -429,6 +429,42 @@ class PlanificacionController extends Controller
             return response()->json(["respuesta" => true]);
         } else {
             return response()->json(["respuesta" => false]);
+        }
+    }
+
+    public function tarea_tramites($tramite)
+    {
+        $tareas_tramites = DB::select('SELECT tt.id, tt.id_tramite,tt.id_tarea,tt.id_proceso, tp.descripcion as proceso, ta.descripcion as tarea, tt.id_usuario,"empleado", tt.estado, tt.fecha_ejecucion, tt.fecha_fin, tt.fecha_asignacion FROM tbl_tareas_tramites tt 
+        INNER JOIN tbl_tareas ta ON ta.id=tt.id_tarea
+        INNER JOIN tbl_procesos tp ON tp.id=tt.id_proceso
+        where id_tramite=?', [$tramite]);
+
+        $usuarios = DB::connection('mysql_aflow')->select('select * from v_usuario_activo');
+        //$cc=[];
+        foreach ($tareas_tramites as $c) {
+            foreach ($usuarios as $u) {
+                if ($c->id_usuario == $u->cedula) {
+                    $c->empleado = $u->nombres . ' ' . $u->apellidos;
+                }
+            }
+        }
+        return $tareas_tramites;
+    }
+
+    public function FRM_COMPROMISO($proceso, $tarea, $tramite)
+    {
+
+        if (Session::get('SESSION_CEDULA')) {
+            if (isset($proceso) || isset($tarea) || isset($tramite)) {
+
+                Session::put('SESSION_PAGE', 'Compromisos>REGISTRO DE COMPROMISOS');
+                $tipos = DB::table('tbl_tipos_fuentes')->where('estado', 1)->get();
+                return view('Sigop.FRM_Tareas.compromisos', compact('tipos', 'tramite', 'proceso', 'tarea'));
+            } else {
+                return Redirect::to('/home');
+            }
+        } else {
+            return Redirect::to('/login');
         }
     }
 }

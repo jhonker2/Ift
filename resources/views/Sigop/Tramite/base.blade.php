@@ -65,6 +65,20 @@
 			background-color: rgba(0, 123, 255, 0.1);
 			/* Fondo ligeramente azul al pasar el mouse, opcional */
 		}
+
+		.table-portoaguas {
+			--bs-table-color: #fff;
+			--bs-table-bg: #2196F3;
+			--bs-table-border-color: #2196F3;
+			--bs-table-striped-bg: #2196F3;
+			--bs-table-striped-color: #fff;
+			--bs-table-active-bg: #1b5581;
+			--bs-table-active-color: #fff;
+			--bs-table-hover-bg: #215cab;
+			--bs-table-hover-color: #fff;
+			color: var(--bs-table-color);
+			border-color: var(--bs-table-border-color);
+		}
 	</style>
 	@yield('css')
 </head>
@@ -181,7 +195,7 @@
 												<a href="https://mail.portoaguas.gob.ec/">
 													<div class="app-box text-center">
 														<div class="app-icon">
-															<img src="img/zimbra.png" width="30" alt="">
+															<img src="{{asset('img/zimbra.png')}}" width="30" alt="">
 														</div>
 														<div class="app-name">
 															<p class="mb-0 mt-1">Zimbra</p>
@@ -193,7 +207,7 @@
 												<a href="http://intranet.portoaguas.gob.ec/">
 													<div class="app-box text-center">
 														<div class="app-icon">
-															<img src="img/logoc.png" width="30" alt="">
+															<img src="{{asset('img/logoc.png')}}" width="30" alt="">
 														</div>
 														<div class="app-name">
 															<p class="mb-0 mt-1">Intranet</p>
@@ -219,7 +233,7 @@
 													href="https://saft.portoaguas.gob.ec/sistema/login.php?emp=PORTOAGUAS">
 													<div class="app-box text-center">
 														<div class="app-icon">
-															<img src="img/saft.png" width="30" alt="">
+															<img src="{{asset('img/saft.png')}}" width="30" alt="">
 														</div>
 														<div class="app-name">
 															<p class="mb-0 mt-1">Saft</p>
@@ -231,7 +245,7 @@
 												<a href="https://portal.compraspublicas.gob.ec/sercop/">
 													<div class="app-box text-center">
 														<div class="app-icon">
-															<img src="img/secorp.png" width="30" alt="">
+															<img src="{{asset('img/secorp.png')}}" width="30" alt="">
 														</div>
 														<div class="app-name">
 															<p class="mb-0 mt-1">Secorp</p>
@@ -243,7 +257,7 @@
 												<a href="http://intranet.portoaguas.gob.ec/rol">
 													<div class="app-box text-center">
 														<div class="app-icon">
-															<img src="img/roles.png" width="30" alt="">
+															<img src="{{asset('img/roles.png')}}" width="30" alt="">
 														</div>
 														<div class="app-name">
 															<p class="mb-0 mt-1">Roles</p>
@@ -297,7 +311,7 @@
 					<div class="user-box dropdown px-3">
 						<a class="d-flex align-items-center nav-link dropdown-toggle gap-3 dropdown-toggle-nocaret"
 							href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-							<img src="../img/persona.png" class="user-img" alt="user avatar">
+							<img src="{{asset('img/persona.png')}}" class="user-img" alt="user avatar">
 							<div class="user-info">
 
 
@@ -521,6 +535,39 @@
 			</div>
 
 
+			<!--MODAL TAREAS TRAMITES-->
+			<div class="modal fade" id="modal_tarea_tramite" tabindex="-1" style="display: none;" aria-hidden="true">
+				<div class="modal-dialog modal-xl">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Tramite: <span id="id_tramite"></span></h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<div class="card">
+								<div class="card-body">
+									<table class="table mb-0">
+										<thead class="table-portoaguas">
+											<tr>
+												<th scope="col">#</th>
+												<th scope="col">TAREA</th>
+												<th scope="col">FECHA ASIGNACION</th>
+												<th scope="col">FECHA FIN</th>
+												<th scope="col">USUARIO</th>
+												<th scope="col">ESTADO</th>
+											</tr>
+										</thead>
+										<tbody id="body_c">
+
+
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 
 
 		</header>
