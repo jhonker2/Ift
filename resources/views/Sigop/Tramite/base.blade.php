@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
 
 <head>
 	<!-- Required meta tags -->
@@ -33,6 +33,7 @@
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 	<!-- Font Awesome -->
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css">
+	<input type="hidden" name="csrf-token" value="{{ csrf_token() }}" id="csrf-token">
 	<title>PORTOAGUAS EP</title>
 	<style>
 		/* Estilos personalizados para expandir el modal */
@@ -50,48 +51,22 @@
 			cursor: pointer;
 			/* Opcional: cambia el cursor al pasar el mouse */
 		}
+
 		#searchButton {
-    background-color: transparent; /* Fondo transparente */
-    border: none; /* Sin borde */
-    color: #007bff; /* Color del ícono, ajusta según necesites */
-}
-
-#searchButton:hover {
-    background-color: rgba(0, 123, 255, 0.1); /* Fondo ligeramente azul al pasar el mouse, opcional */
-}
-
-
-		.modal-dialog {
-			max-width: 80%;
-			/* Ajusta esto al porcentaje deseado */
-			margin: 1.25rem auto;
+			background-color: transparent;
+			/* Fondo transparente */
+			border: none;
+			/* Sin borde */
+			color: #007bff;
+			/* Color del ícono, ajusta según necesites */
 		}
 
-		.modal-content {
-			min-height: calc(60vh - 3.5rem);
-			/* Altura mínima para que el modal ocupe la pantalla completa */
-		}
-
-		.modal-header,
-		.modal-footer {
-			background-color: #68B5FC;
-			/* Fondo gris para las secciones de encabezado y pie de página del modal */
-			color: white;
-		}
-
-		.modal-body {
-			background-color: #f8f9fa;
-			/* Fondo claro para el cuerpo del modal */
-		}
-
-		.row-highlight {
-			background-color: #e9ecef;
-		}
-
-		.row-standard {
-			background-color: #f8f9fa;
+		#searchButton:hover {
+			background-color: rgba(0, 123, 255, 0.1);
+			/* Fondo ligeramente azul al pasar el mouse, opcional */
 		}
 	</style>
+	@yield('css')
 </head>
 
 <body>
@@ -103,7 +78,9 @@
 				<div>
 				</div>
 				<div>
-					<h4 class="logo-text">PORTOAGUAS </h4>
+					<a href="/home">
+						<h4 class="logo-text">PORTOAGUAS </h4>
+					</a>
 				</div>
 				<div class="toggle-icon ms-auto"><i class='bx bx-arrow-back'></i>
 				</div>
@@ -116,27 +93,6 @@
 
 						<div class="menu-title">Mis Opciones</div>
 					</a>
-					<ul>
-						<li>
-							<a href="{{ route('mistramites') }}">
-								<i class='bx bx-radio-circle'></i>Mis Tramites
-							</a>
-						</li>
-						<li>
-							<a href="{{ route('mensajeria2') }}">
-								<i class='bx bx-radio-circle'></i>Mensajería
-							</a>
-						</li>
-
-						<li>
-							<a href="horizon">
-								<i class='bx bx-radio-circle'></i>horizon
-							</a>
-						</li>
-
-
-					</ul>
-
 				</li>
 				<li>
 
@@ -149,18 +105,24 @@
 						<div class="parent-icon"><i class='bx bx-book'></i></div>
 						<div class="menu-title">Administrar</div>
 					</a>
-
-
+					@if(session('SESSION_ROL')=="ROL_PL_SIGOP" ||session('SESSION_ROL')=="ROL_DESA" )
 					<ul>
-						@if (isset($campos))
-						@foreach ($campos as $proceso)
 						<li>
-							<a href="{{ url('/formulario/' . $proceso->Id_proceso) }}">
-								<i class='bx bx-radio-circle'></i>{{ $proceso->Descripcion }}
+							<a href="/fuentes">
+								<i class='bx bx-radio-circle'></i>
+								Configuracion de fuentes
 							</a>
 						</li>
-						@endforeach
-						@endif
+						<li>
+							<a href="/tipos_fuentes">
+								<i class='bx bx-radio-circle'></i>
+								Configuración tipos de fuentes
+							</a>
+						</li>
+					</ul>
+					@endif
+					<ul>
+
 
 
 					</ul>
@@ -171,12 +133,11 @@
 					<a class="has-arrow" href="javascript:;">
 						<div class="parent-icon"><i class="bx bx-repeat"></i>
 						</div>
-						<div class="menu-title">Mis Procesos</div>
+						<div class="menu-title">Procesos</div>
 					</a>
 					<ul>
-						@foreach ($procesos as $proceso)
-						<li><a href="{{ url('/proceso/' . $proceso->idproceso) }}"><i class='bx bx-radio-circle'></i>{{ $proceso->descripcion }}</a></li>
-						@endforeach
+						<li><a href="proceso/compromiso"><i class='bx bx-radio-circle'></i>
+								CREAR COMPROMISOS</a></li>
 					</ul>
 
 
@@ -200,17 +161,19 @@
 					</div>
 
 					<div class="search-bar d-lg-block d-none" data-bs-toggle="modal" data-bs-target="#SearchModal">
-						<a href="avascript:;" class="btn d-flex align-items-center"><i class="bx bx-search"></i>Search</a>
+						<a href="avascript:;" class="btn d-flex align-items-center"><i
+								class="bx bx-search"></i>Search</a>
 					</div>
 
 					<div class="top-menu ms-auto">
 						<ul class="navbar-nav align-items-center gap-1">
-							
+
 
 
 
 							<li class="nav-item dropdown dropdown-app">
-								<a class="nav-link dropdown-toggle dropdown-toggle-nocaret" data-bs-toggle="dropdown" href="javascript:;"><i class='bx bx-grid-alt'></i></a>
+								<a class="nav-link dropdown-toggle dropdown-toggle-nocaret" data-bs-toggle="dropdown"
+									href="javascript:;"><i class='bx bx-grid-alt'></i></a>
 								<div class="dropdown-menu dropdown-menu-end p-0">
 									<div class="app-container p-2 my-2">
 										<div class="row gx-0 gy-2 row-cols-3 justify-content-center p-2">
@@ -242,7 +205,8 @@
 												<a href="https://drive.portoaguas.gob.ec:8443/">
 													<div class="app-box text-center">
 														<div class="app-icon">
-															<img src="{{ asset('assets/images/app/google-drive.png') }}" width="30" alt="">
+															<img src="{{ asset('assets/images/app/google-drive.png') }}"
+																width="30" alt="">
 														</div>
 														<div class="app-name">
 															<p class="mb-0 mt-1">Drive</p>
@@ -251,7 +215,8 @@
 												</a>
 											</div>
 											<div class="col">
-												<a href="https://saft.portoaguas.gob.ec/sistema/login.php?emp=PORTOAGUAS">
+												<a
+													href="https://saft.portoaguas.gob.ec/sistema/login.php?emp=PORTOAGUAS">
 													<div class="app-box text-center">
 														<div class="app-icon">
 															<img src="img/saft.png" width="30" alt="">
@@ -330,7 +295,8 @@
 						</ul>
 					</div>
 					<div class="user-box dropdown px-3">
-						<a class="d-flex align-items-center nav-link dropdown-toggle gap-3 dropdown-toggle-nocaret" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+						<a class="d-flex align-items-center nav-link dropdown-toggle gap-3 dropdown-toggle-nocaret"
+							href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 							<img src="../img/persona.png" class="user-img" alt="user avatar">
 							<div class="user-info">
 
@@ -343,19 +309,24 @@
 							</div>
 						</a>
 						<ul class="dropdown-menu dropdown-menu-end">
-							<li><a class="dropdown-item d-flex align-items-center" href="javascript:;"><i class="bx bx-user fs-5"></i><span>Perfil</span></a>
+							<li><a class="dropdown-item d-flex align-items-center" href="javascript:;"><i
+										class="bx bx-user fs-5"></i><span>Perfil</span></a>
 							</li>
-							<li><a class="dropdown-item d-flex align-items-center" href="javascript:;"><i class="bx bx-cog fs-5"></i><span>Configuracion</span></a>
+							<li><a class="dropdown-item d-flex align-items-center" href="javascript:;"><i
+										class="bx bx-cog fs-5"></i><span>Configuracion</span></a>
 							</li>
-							<li><a class="dropdown-item d-flex align-items-center" href="javascript:;"><i class="bx bx-home-circle fs-5"></i><span>Dashboard</span></a>
+							<li><a class="dropdown-item d-flex align-items-center" href="javascript:;"><i
+										class="bx bx-home-circle fs-5"></i><span>Dashboard</span></a>
 							</li>
 							</li>
-							<li><a class="dropdown-item d-flex align-items-center" href="javascript:;"><i class="bx bx-download fs-5"></i><span>Descargar Docs</span></a>
+							<li><a class="dropdown-item d-flex align-items-center" href="javascript:;"><i
+										class="bx bx-download fs-5"></i><span>Descargar Docs</span></a>
 							</li>
 							<li>
 								<div class="dropdown-divider mb-0"></div>
 							</li>
-							<li><a class="dropdown-item d-flex align-items-center" href="/logout"><i class="bx bx-log-out-circle"></i><span>Cerrar Sesion</span></a>
+							<li><a class="dropdown-item d-flex align-items-center" href="/logout"><i
+										class="bx bx-log-out-circle"></i><span>Cerrar Sesion</span></a>
 							</li>
 						</ul>
 					</div>
@@ -392,9 +363,12 @@
 										<td>JHONNY CARLOS ROJAS MACIAS</td>
 										<td>PROCESO</td>
 										<td>
-											<button class="btn btn-sm btn-primary eye-button"><i class="fas fa-eye"></i></button>
-											<button class="btn btn-sm btn-warning"><i class="fas fa-unlock-alt"></i></button>
-											<button class="btn btn-sm btn-success"><i class="fas fa-arrow-right"></i></button>
+											<button class="btn btn-sm btn-primary eye-button"><i
+													class="fas fa-eye"></i></button>
+											<button class="btn btn-sm btn-warning"><i
+													class="fas fa-unlock-alt"></i></button>
+											<button class="btn btn-sm btn-success"><i
+													class="fas fa-arrow-right"></i></button>
 										</td>
 									</tr>
 									<tr class="row-standard">
@@ -404,9 +378,11 @@
 										<td>USUARIO SISTEMA</td>
 										<td>PROCESO</td>
 										<td>
-											<button class="btn btn-sm btn-primary eye-button"><i class="fas fa-eye"></i></button>
+											<button class="btn btn-sm btn-primary eye-button"><i
+													class="fas fa-eye"></i></button>
 											<button class="btn btn-sm btn-warning"><i class="fas fa-lock"></i></button>
-											<button class="btn btn-sm btn-success"><i class="fas fa-arrow-right"></i></button>
+											<button class="btn btn-sm btn-success"><i
+													class="fas fa-arrow-right"></i></button>
 										</td>
 									</tr>
 								</tbody>
@@ -415,22 +391,136 @@
 					</div>
 				</div>
 			</div>
-	
-			<div class="modal fade" id="SearchModal" tabindex="-1" role="dialog" aria-labelledby="SearchModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content" style="min-height: calc(40vh - 3.5rem);">
-            <div class="modal-header gap-5">
-                <div class="position-relative popup-search w-100">
-                    <input class="form-control form-control-lg ps-5 border border-3 border-primary" type="search" id="searchInput" placeholder="BUSCAR TRAMITE">
-					<button id="searchButton" class="btn position-absolute end-0 top-50 translate-middle-y">
-    <i class="fas fa-search"></i>
-</button>
 
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+			<div class="modal fade" id="SearchModal" tabindex="-1" role="dialog" aria-labelledby="SearchModalLabel"
+				aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered" role="document">
+					<div class="modal-content" style="min-height: calc(40vh - 3.5rem);">
+						<div class="modal-header gap-5">
+							<div class="position-relative popup-search w-100">
+								<input class="form-control form-control-lg ps-5 border border-3 border-primary"
+									type="search" id="searchInput" placeholder="BUSCAR TRAMITE">
+								<button id="searchButton" class="btn position-absolute end-0 top-50 translate-middle-y">
+									<i class="fas fa-search"></i>
+								</button>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!--MODALES DE FUENTES-->
+
+			<div class="modal fade" id="modal_r_fuente" tabindex="-1" style="display: none;" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Modal title</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<div class="col-md-12">
+								<label for="input15" class="form-label">Fuente</label>
+								<div class="position-relative input-icon">
+									<input type="text" class="form-control" id="ip_fuente" placeholder="Fuente">
+									<span class="position-absolute top-50 translate-middle-y"><i
+											class="bx bx-world"></i></span>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+							<button type="button" class="btn btn-primary" id="btn_s_fuente"
+								onclick="save_fuente()">Guardar</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal fade" id="modal_e_fuente" tabindex="-1" style="display: none;" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Editar Fuente de ingreso</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<div class="col-md-12">
+								<label for="input15" class="form-label">Fuente</label>
+								<div class="position-relative input-icon">
+									<input type="hidden" id="ip_eidfuente">
+									<input type="text" class="form-control" id="ip_efuente" placeholder="Fuente">
+									<span class="position-absolute top-50 translate-middle-y"><i
+											class="bx bx-world"></i></span>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+							<button type="button" class="btn btn-primary" id="btn_s_fuente"
+								onclick="save_fuente()">Guardar</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!--FIN MODALES DE FUENTES-->
+
+			<!--MODALES DE TIPOS DE FUENTES-->
+
+			<div class="modal fade" id="modal_r_tfuente" tabindex="-1" style="display: none;" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Registrar tipos de tramite</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<div class="col-md-12">
+								<label for="input15" class="form-label">Tipo de tramite</label>
+								<div class="position-relative input-icon">
+									<input type="text" class="form-control" id="ip_tipo" placeholder="Tipo de tramite">
+									<span class="position-absolute top-50 translate-middle-y"><i
+											class="bx bx-world"></i></span>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+							<button type="button" class="btn btn-primary" id="btn_s_tfuente"
+								onclick="save_tfuente()">Guardar</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal fade" id="modal_e_tfuente" tabindex="-1" style="display: none;" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Editar Fuente de ingreso</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<div class="col-md-12">
+								<label for="input15" class="form-label">Tipos de Fuente</label>
+								<div class="position-relative input-icon">
+									<input type="hidden" id="ip_eidfuente">
+									<input type="text" class="form-control" id="ip_efuente" placeholder="Fuente">
+									<span class="position-absolute top-50 translate-middle-y"><i
+											class="bx bx-world"></i></span>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+							<button type="button" class="btn btn-primary" id="btn_s_fuente"
+								onclick="save_fuente()">Guardar</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
 
 
 		</header>
@@ -440,23 +530,17 @@
 			<div class="page-content">
 				<!--breadcrumb-->
 				<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-					<div class="breadcrumb-title pe-3">Actividades</div>
+					<div class="breadcrumb-title pe-3">{{session('SESSION_PAGE','null')}}</div>
 					<div class="ps-3">
 						<nav aria-label="breadcrumb">
 							<ol class="breadcrumb mb-0 p-0">
 								<li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a>
 								</li>
-
-
 							</ol>
-						</nav>
 
 					</div>
-
 				</div>
-				<!--end breadcrumb-->
-				<!-- En alguna parte de tu archivo HTML -->
-				<div class="container mt-3">
+				<div>
 					@yield('content')
 
 					@if(isset($datosSesion))
@@ -474,7 +558,8 @@
 		<!--start overlay-->
 		<div class="overlay toggle-icon"></div>
 		<!--end overlay-->
-		<!--Start Back To Top Button--> <a href="javaScript:;" class="back-to-top"><i class='bx bxs-up-arrow-alt'></i></a>
+		<!--Start Back To Top Button--> <a href="javaScript:;" class="back-to-top"><i
+				class='bx bxs-up-arrow-alt'></i></a>
 		<!--End Back To Top Button-->
 		<footer class="page-footer">
 			<p class="mb-0">Copyright © 2023. PORTOAGUAS EP.</p>
@@ -485,8 +570,8 @@
 	<!-- Modal -->
 
 	<!-- search modal -->
-	
-</div>
+
+	</div>
 
 	<!-- end search modal -->
 	<div class="modal fade" id="filesModal" tabindex="-1" aria-labelledby="processModalLabel" aria-hidden="true">
@@ -522,18 +607,22 @@
 					</div>
 					<!-- Lista de archivos -->
 					<div class="list-group">
-						<a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+						<a href="#"
+							class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
 
-							<a href="http://192.168.1.21/a1.pdf" target="_blank" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+							<a href="http://192.168.1.21/a1.pdf" target="_blank"
+								class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
 								SOLICITUD
 								<span class="badge badge-primary badge-pill">Ver</span>
 							</a>
 						</a>
-						<a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+						<a href="#"
+							class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
 							MEMORANDO
 							<span class="badge badge-primary badge-pill">Ver</span>
 						</a>
-						<a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+						<a href="#"
+							class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
 							DOCUMENTOS SOPORTE
 							<span class="badge badge-primary badge-pill">Ver</span>
 						</a>
@@ -558,7 +647,8 @@
 						<div id="inicio" class="wf-item" style="position: absolute; left: 20px; top: 50%;">
 							<i class="fa fa-play"></i> Inicio
 						</div>
-						<div id="proceso" class="wf-item" style="position: absolute; left: 40%; top: 50%;" onclick="openFilesModal()">
+						<div id="proceso" class="wf-item" style="position: absolute; left: 40%; top: 50%;"
+							onclick="openFilesModal()">
 							<i class="fa fa-cogs"></i> Proceso
 						</div>
 						<div id="fin" class="wf-item" style="position: absolute; left: 80%; top: 50%;">
@@ -575,8 +665,8 @@
 	</div>
 
 	<!-- search modal -->
-    
-</div>
+
+	</div>
 
 
 
@@ -592,7 +682,6 @@
 	<!-- Bootstrap JS -->
 	<script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
 	<!--plugins-->
-	<script src="{{ asset('assets/js/tramites.js') }}"></script>
 
 	<script src="{{ asset('assets/js/jquery.min.js') }}"></script>
 	<script src="{{ asset('assets/plugins/simplebar/js/simplebar.min.js') }}"></script>
@@ -600,36 +689,37 @@
 	<script src="{{ asset('assets/plugins/metismenu/js/metisMenu.min.js') }}"></script>
 	<script src="{{ asset('assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js') }}"></script>
 	<script>
-document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById("searchButton").addEventListener("click", searchTramite);
-});
+		document.addEventListener("DOMContentLoaded", function () {
+			document.getElementById("searchButton").addEventListener("click", searchTramite);
+		});
 
-function searchTramite() {
-    var inputVal = document.getElementById("searchInput").value;
-    if(inputVal === "5987778") {
-		
-        // Cierra el modal de búsqueda y abre el modal de tarea
-		$('#SearchModal').modal('hide');
-        $('#tareaModal').modal('show');
-    } else {
-        alert("Número de trámite no encontrado.");
-    }
-}
+		function searchTramite() {
+			var inputVal = document.getElementById("searchInput").value;
+			if (inputVal === "5987778") {
+
+				// Cierra el modal de búsqueda y abre el modal de tarea
+				$('#SearchModal').modal('hide');
+				$('#tareaModal').modal('show');
+			} else {
+				alert("Número de trámite no encontrado.");
+			}
+		}
 
 
-function handleKeyPress(e) {
-    var key = e.keyCode || e.which;
-    if (key == 13) { // 13 es el código de tecla para Enter
-        searchTramite();
-    }
-}
+		function handleKeyPress(e) {
+			var key = e.keyCode || e.which;
+			if (key == 13) { // 13 es el código de tecla para Enter
+				searchTramite();
+			}
+		}
 
-</script><script>
-		document.addEventListener('DOMContentLoaded', function() {
+	</script>
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
 			const procesoLinks = document.querySelectorAll('.proceso-link');
 
 			procesoLinks.forEach(link => {
-				link.addEventListener('click', function() {
+				link.addEventListener('click', function () {
 					const procesoId = this.getAttribute('data-proceso-id');
 					guardarProcesoEnSesion(procesoId);
 				});
@@ -637,15 +727,15 @@ function handleKeyPress(e) {
 
 			function guardarProcesoEnSesion(procesoId) {
 				fetch('/guardar-proceso-en-sesion/' + procesoId, {
-						method: 'POST',
-						headers: {
-							'X-CSRF-TOKEN': '{{ csrf_token() }}',
-							'Content-Type': 'application/json',
-						},
-						body: JSON.stringify({
-							procesoId: procesoId
-						})
+					method: 'POST',
+					headers: {
+						'X-CSRF-TOKEN': '{{ csrf_token() }}',
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						procesoId: procesoId
 					})
+				})
 					.then(response => response.json())
 					.then(data => {
 						console.log(data);
@@ -657,7 +747,7 @@ function handleKeyPress(e) {
 	</script>
 
 	<script>
-		document.addEventListener('DOMContentLoaded', function() {
+		document.addEventListener('DOMContentLoaded', function () {
 			var calendarEl = document.getElementById('calendar');
 			var calendar = new FullCalendar.Calendar(calendarEl, {
 				headerToolbar: {
@@ -694,7 +784,7 @@ function handleKeyPress(e) {
 			$('#workflowModal').modal('hide');
 
 			// Abre el modal de archivos después de un corto retraso para permitir que se cierre el modal de flujo de trabajo
-			setTimeout(function() {
+			setTimeout(function () {
 				$('#filesModal').modal('show');
 			}, 500); // 500 milisegundos de retraso
 		}
@@ -709,41 +799,41 @@ function handleKeyPress(e) {
 	<script src="{{ asset('assets/js/index2.js') }}"></script>
 	<!-- Bootstrap JS -->
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+	<script src="{{ asset('assets/js/sigop.js')}}"></script>
+	@yield('js')
 	<!--plugins-->
 	<script>
-		document.getElementById('nombreInput').addEventListener('input', function() {
+
+		document.getElementById('nombreInput').addEventListener('input', function () {
 			var selectedOption = document.querySelector(`#resultList option[value="${this.value}"]`);
 			var responsableId = selectedOption ? selectedOption.getAttribute('data-id') : '';
 			document.getElementById('responsableId').value = responsableId;
 		});
 
-		document.getElementById('nombreInput').addEventListener('keyup', function() {
+		document.getElementById('nombreInput').addEventListener('keyup', function () {
 			var query = this.value;
 			if (query.length >= 2) {
 				$.ajax({
 					url: `/get_empleados?nombres=${query}`,
 					type: 'GET',
 					dataType: 'json',
-					success: function(data) {
+					success: function (data) {
 						var resultList = document.getElementById('resultList');
 						resultList.innerHTML = ''; // Limpiar resultados anteriores
 						data.forEach(item => {
 							resultList.innerHTML += `<option data-id="${item.IDENTIFICACION}" value="${item.NOMBRES} (${item.CARGO})"></option>`;
 						});
 					},
-					error: function(xhr, status, error) {
+					error: function (xhr, status, error) {
 						console.error('Error:', error);
 					}
 				});
 			}
 		});
-	</script>
 
-	<script>
-		$(document).ready(function() {
-			$('#workflowModal').on('shown.bs.modal', function() {
-				jsPlumb.ready(function() {
+		$(document).ready(function () {
+			$('#workflowModal').on('shown.bs.modal', function () {
+				jsPlumb.ready(function () {
 					var instance = jsPlumb.getInstance({
 						Container: "workflow-container"
 					});
@@ -774,156 +864,15 @@ function handleKeyPress(e) {
 			});
 
 			// Asegúrate de que jsPlumb se reinicializa al cerrar el modal para evitar duplicados
-			$('#workflowModal').on('hidden.bs.modal', function() {
+			$('#workflowModal').on('hidden.bs.modal', function () {
 				jsPlumb.deleteEveryConnection();
 				jsPlumb.deleteEveryEndpoint();
 			});
 		});
 	</script>
 
-	<script>
-		$(document).ready(function() {
-			$('.eye-button').on('click', function() {
-				$('#workflowModal').modal('show');
-
-			});
-		});
-	</script>
 
 
-	<script>
-		jsPlumb.ready(function() {
-			var instance = jsPlumb.getInstance({
-				DragOptions: {
-					cursor: 'pointer',
-					zIndex: 2000
-				},
-				ConnectionOverlays: [
-					["Arrow", {
-						location: 1,
-						visible: true,
-						width: 11,
-						length: 11,
-						id: "ARROW",
-						events: {
-							click: function() {
-								alert("you clicked on the arrow overlay")
-							}
-						}
-					}],
-					["Label", {
-						location: 0.5,
-						id: "label",
-						cssClass: "aLabel",
-						events: {
-							tap: function() {
-								alert("hey");
-							}
-						}
-					}]
-				],
-				Container: "workflow-container"
-			});
-
-			// Estilos básicos para las conexiones
-			var basicStyle = {
-				connector: "StateMachine",
-				paintStyle: {
-					stroke: "red",
-					strokeWidth: 4
-				},
-				hoverPaintStyle: {
-					stroke: "blue"
-				},
-				overlays: ["Arrow"]
-			};
-
-			instance.connect({
-				source: "inicio",
-				target: "proceso",
-				type: "basic"
-			});
-			instance.connect({
-				source: "proceso",
-				target: "fin",
-				type: "basic"
-			});
-
-			instance.importDefaults({
-				Connector: ["Straight", {
-					curviness: 50
-				}],
-				Anchors: ["TopCenter", "BottomCenter"]
-			});
-
-			jsPlumb.fire("jsPlumbDemoLoaded", instance);
-		});
-	</script>
-
-	<script>
-		// Comprobar si existe la variable de sesión 'success'
-		@if(session('success'))
-		Swal.fire({
-			title: '¡Éxito!',
-			text: '{{ session('
-			success ') }}',
-			icon: 'success',
-			confirmButtonText: 'Aceptar'
-		});
-		@endif
-	</script>
-	<script>
-		// Comprobar si existe la variable de sesión 'error'
-		@if(session('error'))
-		Swal.fire({
-			title: 'Error',
-			text: '{{ session('
-			error ') }}',
-			icon: 'error',
-			confirmButtonText: 'Aceptar'
-		});
-		@endif
-	</script>
-	<script>
-		$(document).ready(function() {
-			$('#image-uploadify').imageuploadify();
-		})
-	</script>
-	<!--app JS-->
-	<script>
-		$(".datepicker").flatpickr();
-
-		$(".time-picker").flatpickr({
-			enableTime: true,
-			noCalendar: true,
-			dateFormat: "Y-m-d H:i",
-		})
-
-		$(".date-time").flatpickr({
-			enableTime: true,
-			dateFormat: "Y-m-d H:i",
-		});
-
-		$(".date-format").flatpickr({
-			altInput: true,
-			altFormat: "F j, Y",
-			dateFormat: "Y-m-d",
-		});
-
-		$(".date-range").flatpickr({
-			mode: "range",
-			altInput: true,
-			altFormat: "F j, Y",
-			dateFormat: "Y-m-d",
-		});
-
-		$(".date-inline").flatpickr({
-			inline: true,
-			altInput: true,
-			altFormat: "F j, Y",
-			dateFormat: "Y-m-d",
-		});
-	</script>
 </body>
 
 </html>

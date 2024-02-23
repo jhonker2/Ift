@@ -24,8 +24,8 @@ Route::get('mapa', [ControllersPlanificar::class, 'mapa']);
 Route::get('obtenerNotificaciones', [ControllersPlanificar::class, 'obtenerNotificaciones']);
 
 
-Route::get('/wilson', [ControllersPlanificar::class, 'wilson']);
-    
+//Route::get('/wilson', [ControllersPlanificar::class, 'wilson']);
+
 Route::get('/obtenerCodigos_Ciclos', [SoapController::class, 'obtenerCodigos_Ciclos']);
 Route::get('/obtenerInfoRuta/{ciclo}', [SoapController::class, 'obtenerInfoRuta']);
 Route::get('/obtenerRuta/{ciclo}', [SoapController::class, 'obtenerCuentasPorRuta']);
@@ -90,7 +90,9 @@ Route::get('/error', function () {
 
 //Route::get('navidad', function () {return view('login.navidad');});
 //compromiso app
-Route::get('loginle', function () {return view('login.loginlecto');});
+Route::get('loginle', function () {
+    return view('login.loginlecto');
+});
 
 Route::get('/callSoapApiD/{clave}', [SoapController::class, 'callSoapApiD'])->name('callSoapApiD');
 Route::get('/getClave/{clave}', [SoapController::class, 'callSoapApi'])->name('callSoapApi');
@@ -106,20 +108,18 @@ Route::get('/dashboard', function () {
     return view('Tramite.dasboard');
 })->name('dashboard');
 
-Route::get('/index2', [PlanificacionController::class, 'index2'])->name('index2');
 
 
 Route::post('/guardar_tarea', [CrearProcesoController::class, 'store'])->name('guardar_tarea');
 
-// Asegúrate de tener una ruta que maneje la URL con el id_compromiso
-Route::get('/proceso/{id_compromiso}', 'PlanificacionController@proceso');
+Route::get('/proceso/compromiso', [PlanificacionController::class, 'proceso']);
 
 Route::get('/guardar-proceso-en-sesion/{proceso}', [PlanificacionController::class, 'guardarProcesoEnSesion'])->name('guardarProcesoEnSesion');
 
 // Rutas dentro de web.php
 //bloqueo 
 //Route::middleware(['blockeplani'])->group(function () {
-    Route::get('facturas_datos', [ControllersMonitoreo::class, 'facturas_datos'])->name('facturas_datos');
+Route::get('facturas_datos', [ControllersMonitoreo::class, 'facturas_datos'])->name('facturas_datos');
 //});
 Route::middleware(['blocke'])->group(function () {
     Route::get('Lecto2', [ControllersCobranza::class, 'cobranza']);
@@ -128,25 +128,28 @@ Route::middleware(['blocke'])->group(function () {
     Route::get('facturamonitoreo', [ControllersMonitoreo::class, 'monitoreorutas']);
 
     Route::get('Monitoreo', [ControllersMonitoreo::class, 'personalCampo']);
-Route::get('CriticaLectura', [ControllersCriticaLectura::class, 'criticaLectura']);
-Route::get('Sesiones', [ControllersPlanificar::class, 'sesion']);
-Route::get('SondeoE', [ControllersMonitoreo::class, 'SondeoE']);
-Route::get('SondeoP', [ControllersMonitoreo::class, 'SondeoP']);
-Route::get('php_info', [SoapController::class, 'php_info']);
+    Route::get('CriticaLectura', [ControllersCriticaLectura::class, 'criticaLectura']);
+    Route::get('Sesiones', [ControllersPlanificar::class, 'sesion']);
+    Route::get('SondeoE', [ControllersMonitoreo::class, 'SondeoE']);
+    Route::get('SondeoP', [ControllersMonitoreo::class, 'SondeoP']);
+    Route::get('php_info', [SoapController::class, 'php_info']);
 
 
 
-/*CAMBIOS JHONY GUAMAN*/
+    /*CAMBIOS JHONY GUAMAN*/
 
-Route::get('/get_total_ejecutas',[ControllersMonitoreo::class, 'get_ejecutadas']);
+    Route::get('/get_total_ejecutas', [ControllersMonitoreo::class, 'get_ejecutadas']);
 });
 
 /***********/
 /**SIGOP***/
 
-Route::get('login',[PlanificacionController::class, 'login']);
+Route::get('login', [PlanificacionController::class, 'login']);
 Route::post('/loginingresar2', [SoapController::class, 'autenticacionWeb'])->name('autenticacionWeb');
+Route::get('logout', [PlanificacionController::class, 'logout']);
+
 Route::get('home', [PlanificacionController::class, 'index']);
+Route::get('/index2', [PlanificacionController::class, 'index2'])->name('index2');
 
 
 Route::get('/mensajeria2', [PlanificacionController::class, 'mensajeria2'])->name('mensajeria2');; // Usa la sintaxis de array para referenciar el método del controlador
@@ -170,4 +173,18 @@ Route::get('/get_empleados', [PlanificacionController::class, 'get_empleados'])-
 Route::get('base', [PlanificacionController::class, 'base'])->name('base');
 
 
+/*FUENTES*/
+Route::get('fuentes', [PlanificacionController::class, 'fuentes']);
+Route::post('/store/fuente', [PlanificacionController::class, 'store_fuente']);
+Route::get('get_fuentes', [PlanificacionController::class, 'get_fuentes']);
 
+
+/**TIPOS FUENTES*/
+Route::get('tipos_fuentes', [PlanificacionController::class, 'tipos_fuentes']);
+Route::post('store/tipofuentes', [PlanificacionController::class, 'store_tipo_fuente']);
+Route::get('get_tipos_fuentes', [PlanificacionController::class, 'get_tipos_fuentes']);
+
+
+/**COMPROMISOS */
+
+Route::post('store/compromisos', [PlanificacionController::class, 'store_compromisos']);

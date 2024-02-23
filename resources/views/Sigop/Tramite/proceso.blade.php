@@ -1,112 +1,98 @@
-@extends('Tramite.base')
-<!DOCTYPE html>
-<html>
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-
+@extends('Sigop.Tramite.base')
+@section('css')
+<style>
+    .ck-content {
+        height: 15em !important;
+    }
+</style>
+@endsection
 @section('content')
-<!--start page wrapper -->
-<!--start page wrapper -->
+<div class="page-content">
+    <!--breadcrumb-->
+    <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+        <div class="breadcrumb-title pe-3">Crear Compromiso</div>
 
-			<div class="page-content">
-				<!--breadcrumb-->
-				<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-					<div class="breadcrumb-title pe-3">Crear Tramites</div>
-				
-					
-				</div>
-				<!--end breadcrumb-->
-                <form action="{{ route('guardar_tarea') }}" method="POST">
-    @csrf
+
+    </div>
+    <!--end breadcrumb-->
     <div class="mb-3">
         <label for="combo1" class="form-label">Seleccione la fuente</label>
-        <select class="form-select" name="idfuente">
+        <select class="form-select" name="sel_fuente">
             <option value="">Seleccione la fuente</option>
-            @foreach($fuentes as $idfuente => $descripcion)
-                <option value="{{ $idfuente }}">{{ $descripcion }}</option>
+            @foreach ($fuentes as $f)
+            <option value="{{ $f->id }}">{{ $f->descripcion }}</option>
             @endforeach
         </select>
     </div>
-    
+
     <div class="mb-3">
         <label for="combo2" class="form-label">Seleccione el Tipo</label>
-        <select class="form-select" name="idtipocompromiso">
+        <select class="form-select" name="sel_tipo">
             <option value="">Seleccione el Tipo</option>
-            @foreach($tiposTramite as $idtipocompromiso => $descripcion)
-                <option value="{{ $idtipocompromiso }}">{{ $descripcion }}</option>
+            @foreach ($tiposTramite as $t)
+            <option value="{{ $t->id }}">{{ $t->descripcion }}</option>
             @endforeach
         </select>
     </div>
-	<div class="mb-3">
-    <label for="nombreInput" class="form-label">Responsable</label>
-    <input type="text" class="form-control" id="nombreInput" placeholder="Escribe para buscar..." list="resultList">
-    <datalist id="resultList"></datalist>
-    <input type="hidden" id="responsableId" name="responsableId">
-</div>
-			
-
-
+    <div class="mb-3">
+        <label for="nombreInput" class="form-label">Responsable</label>
+        <input type="text" class="form-control" id="nombreInput" placeholder="Escribe para buscar..." list="resultList">
+        <datalist id="resultList"></datalist>
+        <input type="hidden" id="responsableId" name="responsableId">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Seleccione la Fecha del compromiso</label>
+        <input type="date" id="ip_fecha" class="form-control date-time" />
+    </div>
+    <!--<h6 class="mb-0 text-uppercase">Archivos:</h6>
+    <input id="fancy-file-upload" type="file" name="files" accept=".jpg, .png, image/jpeg, image/png" multiple>-->
 
     <div class="mb-3">
-        <label for="inputSolicitante" class="form-label">Referencia</label>
-        <textarea class="form-control" name="solicitante" id="inputSolicitante" rows="3"></textarea>
+        <label for="inputSolicitante" class="form-label">Descripción</label>
+        <div id="editor"></div>
     </div>
-	<div class="mb-3">
-        <label for="inputSolicitante" class="form-label">Descripcion</label>
-        <textarea class="form-control" name="descripcionT" id="descripcionT" rows="3"></textarea>
-    </div>
+    <button type="button" class="btn btn-primary px-5" id="btn_save_compromiso" onclick="f_saveCompromiso()">Registrar
+        compromiso</button>
+</div>
+@endsection
 
-				
-						<hr/>
-						<div class="card">
-							<div class="card-body">
-								
-								
-								<div class="mb-3">
-									<label class="form-label">Seleccione la Fecha</label>
-									<input type="text" class="form-control date-time" />
-								</div>
-								
-								
-							</div>
-						</div>
-					
-				
-    
-  
-						<h6 class="mb-0 text-uppercase">Documentos:</h6>
-						<hr/>
-						<div class="card">
-							<div class="card-body">
-								<input id="fancy-file-upload" type="file" name="files" accept=".jpg, .png, image/jpeg, image/png" multiple>
-							</div>
-						</div>
-                        <div class="card">
-							<div class="card-body">
-								<input id="fancy-file-upload" type="file" name="files" accept=".jpg, .png, image/jpeg, image/png" multiple>
-							</div>
-						</div>
-                        <div class="card">
-							<div class="card-body">
-								<input id="fancy-file-upload" type="file" name="files" accept=".jpg, .png, image/jpeg, image/png" multiple>
-							</div>
-						</div>
-					
-    <button type="submit" class="btn btn-primary px-5">Registrar</button>
-</form>
+@section('js')
+<script src="{{'/ckeditor5-build-classic/ckeditor.js'}}"></script>
+<script>
+    ClassicEditor
+        .create(document.querySelector('#editor'))
+        .catch(error => {
+            console.error(error);
+        });
 
-                
-				
+    const f_saveCompromiso = () => {
+        let fuente = $("#sel_fuente").val();
+        let tipo = $("#sel_tipo").val();
+        let fecha_fin = $("#ip_fecha").val();
+        let responsableId = $("#responsableId").val();
+        let descripcion = $("·ck-content").html();
 
+        if (fuente == "") {
 
-			</div>
-	
-    <!--end page wrapper -->
-    <!--end page wrapper -->
+        } else if (tipo == "") {
 
-    @endsection
+        } else if (fecha_fin == "") {
 
-</html>
+        } else if (responsableId == "") {
+
+        } else if (descripcion == "") {
+
+        } else {
+            var token = $("#csrf-token").val();
+            let datos = {
+                fuente,
+                tipo,
+                fecha_fin,
+                responsableId,
+                descripcion
+            };
+            _AJAX_("/store/compromisos", "POST", token, datos, 2);
+        }
+    }
+</script>
+@endsection

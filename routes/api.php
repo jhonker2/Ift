@@ -32,6 +32,7 @@ Route::post('soapwrite', [SoapController::class, 'soapwrite'])->name('soapwrite'
 
 Route::get('getTotales', [SoapController::class, 'getTotales']);
 Route::get('download/{numeroCuenta}', [ControllersMonitoreo::class, 'downloadFile']);
+Route::get('downloadFoto/{numeroCuenta}', [ControllersMonitoreo::class, 'downloadFoto']);
 Route::get('contarFotosSubidas', [ControllersMonitoreo::class, 'contarFotosSubidas']);
 
 Route::get('getcuadrilleros', [ControllersMonitoreo::class, 'ID_CUADRILLEROS']);
