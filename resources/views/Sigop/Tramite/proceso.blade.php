@@ -17,7 +17,7 @@
     <!--end breadcrumb-->
     <div class="mb-3">
         <label for="combo1" class="form-label">Seleccione la fuente</label>
-        <select class="form-select" name="sel_fuente">
+        <select class="form-select" id="sel_fuente">
             <option value="">Seleccione la fuente</option>
             @foreach ($fuentes as $f)
             <option value="{{ $f->id }}">{{ $f->descripcion }}</option>
@@ -27,7 +27,7 @@
 
     <div class="mb-3">
         <label for="combo2" class="form-label">Seleccione el Tipo</label>
-        <select class="form-select" name="sel_tipo">
+        <select class="form-select" id="sel_tipo">
             <option value="">Seleccione el Tipo</option>
             @foreach ($tiposTramite as $t)
             <option value="{{ $t->id }}">{{ $t->descripcion }}</option>
@@ -70,26 +70,28 @@
         let tipo = $("#sel_tipo").val();
         let fecha_fin = $("#ip_fecha").val();
         let responsableId = $("#responsableId").val();
-        let descripcion = $("·ck-content").html();
-
+        let descripcion = $(".ck-content").html();
         if (fuente == "") {
-
+            alert("Falta el dato fuente");
         } else if (tipo == "") {
+            alert("Falta el dato tipo");
 
         } else if (fecha_fin == "") {
+            alert("Falta el dato fecha fin");
 
         } else if (responsableId == "") {
+            alert("Falta el dato responsable");
 
         } else if (descripcion == "") {
-
+            alert("Falta la descripcion");
         } else {
-            var token = $("#csrf-token").val();
+            let token = $("#csrf-token").val();
             let datos = {
-                fuente,
-                tipo,
-                fecha_fin,
-                responsableId,
-                descripcion
+                fuente: fuente,
+                tipo: tipo,
+                fecha_fin: fecha_fin,
+                responsableId: responsableId,
+                descripcion: descripcion
             };
             _AJAX_("/store/compromisos", "POST", token, datos, 2);
         }

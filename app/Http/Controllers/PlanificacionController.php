@@ -20,12 +20,49 @@ class PlanificacionController extends Controller
 {
     public function index()
     {
+        date_default_timezone_set("America/Guayaquil");
+        //$date = "2024-02-25T12:38:40.435251Z"; //Carbon::now();
+        $date = Carbon::now();
+        // return $date;
+
         if (Session::get('SESSION_CEDULA')) {
-            // $campos = TabcampoP::all();
-            // $procesos = TabProceso::where('estado', 'ACTIVO')->get();
             Session::put('SESSION_PAGE', 'Home');
 
-            return view('Sigop.Tramite.index');
+            $completados = DB::select('select count(*) as total from tbl_compromisos  where estado=2');
+            $ejecucion = DB::select('select count(*) as total from tbl_compromisos  where estado=1');
+            $compromisos = DB::select('SELECT c.id, f.descripcion, tf.descripcion, "dias_retrasado" ,c.fecha_inicio,c.responsable, "empleado","cargo", c.fecha_fin, c.descripcion, c.estado FROM tbl_compromisos c
+            INNER JOIN tbl_fuentes f on f.id= c.id_fuente
+            INNER JOIN tbl_tipos_fuentes tf on tf.id = c.id_tipo_fuente');
+
+            $usuarios = DB::connection('mysql_aflow')->select('select * from v_usuario_activo');
+            //$cc=[];
+            foreach ($compromisos as $c) {
+                $fecha1 = new \DateTime($date);
+                $fecha2 = new \DateTime($c->fecha_fin);
+                $diff = $fecha1->diff($fecha2);
+                $v = "";
+                if ($fecha1 > $fecha2) {
+                    if ($diff->days == '0') {
+                    } else {
+                        $v = "Atrasado";
+                    }
+                } else {
+                    $v = "Quedan";
+                }
+                // El resultados sera 3 dias
+                //echo $diff->days . ' dias';
+                foreach ($usuarios as $u) {
+                    if ($c->responsable == $u->cedula) {
+                        $c->empleado = $u->nombre_corto;
+                        $c->cargo = $u->DESCRIPCION;
+                        $c->dias_retrasado = $diff->days . ' ' . $v;
+                    }
+                }
+            }
+            $completados = $completados[0]->total;
+            $ejecucion = $ejecucion[0]->total;
+            //  return $compromisos;
+            return view('Sigop.Tramite.index', compact('compromisos', 'completados', 'ejecucion'));
         } else {
             return Redirect::to('/login');
         }
@@ -361,6 +398,32 @@ class PlanificacionController extends Controller
             'created_at' => $date,
             'usuario_registro' => Session::get('SESSION_CEDULA'),
             'estado' => 1,
+        ]);
+        if ($fuentes > 0) {
+            return response()->json(["respuesta" => true]);
+        } else {
+            return response()->json(["respuesta" => false]);
+        }
+    }
+
+
+    public function store_compromisos(Request $r)
+    {
+        $date = Carbon::now();
+
+        $fechaf = new Carbon($r->fecha_fin);
+        // return $fechaf;
+        $fuentes = DB::table('tbl_compromisos')->insertGetId([
+            'id_fuente' => $r->fuente,
+            'id_tipo_fuente' => $r->tipo,
+            'fecha_inicio' => $date,
+            'fecha_fin' => $fechaf,
+            'responsable' => $r->responsableId,
+            'descripcion' => $r->descripcion,
+            'usuario_registro' => Session::get('SESSION_CEDULA'),
+            'estado' => 1,
+            'created_at' => $date,
+
         ]);
         if ($fuentes > 0) {
             return response()->json(["respuesta" => true]);
