@@ -197,6 +197,7 @@ Route::post('uplodad/file_registro', [PlanificacionController::class, 'upload_fi
 
 
 Route::post('ps_enviar_tarea_2', [PlanificacionController::class, 'ps_enviar_tarea_2']);
+Route::post('ps_enviar_tarea_4', [PlanificacionController::class, 'ps_enviar_tarea_4']);
 /*BORRADOR*/
 
 Route::get('borrador', [PlanificacionController::class, 'borrador']);

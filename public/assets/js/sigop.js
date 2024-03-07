@@ -43,7 +43,7 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
                     }
                 } else if (p == 2) {
                     if (res.respuesta) {
-                        alert(res.msm);
+                        alert(res.sms);
                         $("#id_tramite_init").html(respuesta.id_tramite);
                     }else{
                         alert("Error al guardar el tramite");
@@ -74,7 +74,19 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
                         window.location.href ='/home';
                     }
                     
+                }else if(p==7){
+                    if(res.respuesta){
+                        Swal.fire(
+                            "Tramite",
+                            "El tramite enviado de manera correcta",
+                            "success"
+                        );
+    
+                        window.location.href ='/home';
+                    }
+                    
                 }
+                
             },
         }).fail(function (jqXHR, textStatus, errorthrown) {
             if (jqXHR.status === 0) {

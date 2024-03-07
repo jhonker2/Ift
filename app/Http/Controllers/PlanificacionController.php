@@ -645,7 +645,7 @@ class PlanificacionController extends Controller
 
             ]);*/
             if ($id_tramite > 0) {
-                return response()->json(["respuesta" => true, 'id_tramite' => $id_tramite, 'msm' => 'Cambios guardados correctamente']);
+                return response()->json(["respuesta" => true, 'id_tramite' => $id_tramite, 'sms' => 'Cambios guardados correctamente']);
             } else {
                 return response()->json(["respuesta" => false]);
             }
@@ -654,9 +654,9 @@ class PlanificacionController extends Controller
             $up_tramite = $this->update_tramite($r->id_tramite, $r->id_tarea, $r->id_proceso, $r->fuente, $r->tipo, $r->responsableId, $fechaf, $r->descripcion);
             //return $up_tramite;
             if ($up_tramite > 0) {
-                return response()->json(["respuesta" => true, 'id_tramite' => $r->id_tramite, 'msm' => 'Cambios guardados correctamente']);
+                return response()->json(["respuesta" => true, 'id_tramite' => $r->id_tramite, 'sms' => 'Cambios guardados correctamente']);
             } else if ($up_tramite == 0) {
-                return response()->json(["respuesta" => true, 'id_tramite' => $r->id_tramite, 'msm' => 'Sin cambios que guardar']);
+                return response()->json(["respuesta" => true, 'id_tramite' => $r->id_tramite, 'sms' => 'Sin cambios que guardar']);
             } else {
                 return response()->json(["respuesta" => false]);
             }
@@ -668,7 +668,7 @@ class PlanificacionController extends Controller
         $tareas_tramites = DB::select('SELECT tt.id, tt.id_tramite,tt.id_tarea,tt.id_proceso, tp.descripcion as proceso, ta.descripcion as tarea, tt.id_usuario,"empleado", tt.estado, tt.fecha_ejecucion, tt.fecha_fin, tt.fecha_asignacion FROM tbl_tareas_tramites tt 
         INNER JOIN tbl_tareas ta ON ta.id=tt.id_tarea
         INNER JOIN tbl_procesos tp ON tp.id=tt.id_proceso
-        where id_tramite=?', [$tramite]);
+        where id_tramite=? ORDER BY tt.id ASC', [$tramite]);
 
         $usuarios = DB::connection('mysql_aflow')->select('select * from v_usuario_activo');
         //$cc=[];
@@ -777,6 +777,83 @@ class PlanificacionController extends Controller
             return response()->json(["respuesta" => true, 'sms' => "tramite enviado correctamente"]);
         }
     }
+    public function ps_enviar_tarea_4(Request $r)
+    {
+
+        $date = Carbon::now();
+        //tarea 4
+        if ($r->estado_confirmado == "true") { //true
+            //3
+            $tarea_siguiente = DB::select('select id_tarea_destino FROM tbl_caminos where id_proceso=? and id_tarea_origen=?', [$r->id_proceso, $r->id_tarea]);
+            $usuario = $r->user_session_activa;
+            $procesar = DB::table('tbl_tareas_tramites')
+                ->where('id_tramite', $r->id_tramite)
+                ->where('id_proceso', $r->id_proceso)
+                ->where('id_tarea', $r->id_tarea)
+                ->where('id_usuario', $r->user_session_activa)
+                ->update([
+                    'estado' => 'P',
+                    'fecha_fin' => $date
+                ]);
+            if ($procesar >= 1) {
+                $tram = DB::table('tbl_tramites')
+                    ->where('id', $r->id_tramite)
+                    ->where('id_proceso', $r->id_proceso)
+                    ->update([
+                        'estado' => 2,
+                    ]);
+                $insert_tarea = DB::table('tbl_tareas_tramites')->insertGetId([
+                    "id_tramite" => $r->id_tramite,
+                    "id_proceso" => $r->id_proceso,
+                    "id_tarea" => $tarea_siguiente[0]->id_tarea_destino,
+                    "id_usuario" => $usuario,
+                    "estado" => "P",
+                    'fecha_ejecucion' => $date,
+                    'fecha_asignacion' => $date,
+                ]);
+
+                return response()->json(["respuesta" => true, 'sms' => "tramite finalizado correctamente"]);
+            }
+        } else {
+            //2
+            $tarea_siguiente = DB::select('select IFNULL(id_tarea_origen, 0) as id_tarea_destino from  tbl_caminos where id_proceso=? and id_tarea_destino=?', [$r->id_proceso, $r->id_tarea]);
+            $usuario_responsable = DB::select("select * from tbl_tareas_tramites where id=(select max(id) from tbl_tareas_tramites where id_tramite=? and id_tarea=? and estado = 'P')", [$r->id_tramite, $tarea_siguiente[0]->id_tarea_destino]);
+            $usuario = $usuario_responsable[0]->id_usuario;
+            $procesar = DB::table('tbl_tareas_tramites')
+                ->where('id_tramite', $r->id_tramite)
+                ->where('id_proceso', $r->id_proceso)
+                ->where('id_tarea', $r->id_tarea)
+                ->where('id_usuario', $r->user_session_activa)
+                ->update([
+                    'estado' => 'P',
+                    'fecha_fin' => $date
+                ]);
+
+            if ($procesar >= 1) {
+                /* $tram = DB::table('tbl_tramites')
+                    ->where('id', $r->id_tramite)
+                    ->where('id_proceso', $r->id_proceso)
+                    ->update([
+                        'estado' => 2,
+                    ]);*/
+                $insert_tarea = DB::table('tbl_tareas_tramites')->insertGetId([
+                    "id_tramite" => $r->id_tramite,
+                    "id_proceso" => $r->id_proceso,
+                    "id_tarea" => $tarea_siguiente[0]->id_tarea_destino,
+                    "id_usuario" => $usuario,
+                    "estado" => "E",
+                    'fecha_ejecucion' => $date,
+                    'fecha_asignacion' => $date,
+                ]);
+
+                return response()->json(["respuesta" => true, 'sms' => "tramite finalizado correctamente"]);
+            }
+        }
+
+        //return $usuario_responsable;
+        // return  $usuario_responsable[0]->id_usuario;
+
+    }
     public function ps_enviar_tramite(Request $r)
     {
         $date = Carbon::now();
@@ -824,14 +901,27 @@ class PlanificacionController extends Controller
 
     public function sp_guardar_tarea(Request $r)
     {
-        $tram = DB::table('tbl_tareas_tramites')
-            ->where('id_tramite', $r->id_tramite)
-            ->where('id_proceso', $r->id_proceso)
-            ->where('id_tarea', $r->id_tarea)
-            ->where('id_usuario', $r->user_session_activa)
-            ->update([
-                'observacion' => $r->descripcion,
-            ]);
+        if ($r->id_tarea == 2) {
+            $tram = DB::table('tbl_tareas_tramites')
+                ->where('id_tramite', $r->id_tramite)
+                ->where('id_proceso', $r->id_proceso)
+                ->where('id_tarea', $r->id_tarea)
+                ->where('id_usuario', $r->user_session_activa)
+                ->update([
+                    'observacion' => $r->descripcion,
+                ]);
+        } else if ($r->id_tarea == 4) {
+            $tram = DB::table('tbl_tareas_tramites')
+                ->where('id_tramite', $r->id_tramite)
+                ->where('id_proceso', $r->id_proceso)
+                ->where('id_tarea', $r->id_tarea)
+                ->where('id_usuario', $r->user_session_activa)
+                ->update([
+                    'observacion' => $r->descripcion,
+                    'estado_confirmacion' => $r->estado_confirmado
+                ]);
+        }
+
 
         if ($tram == 1) {
             return response()->json(["respuesta" => true, 'sms' => "Tarea Guardada correctamente"]);

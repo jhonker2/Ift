@@ -233,8 +233,9 @@
             </ul>
         </div>
         <hr>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="chk_estado">
+        <div class="form-check form-switch">
+            <!--<input class="form-check-input" type="checkbox" id="chk_estado">-->
+            <input class="form-check-input" type="checkbox" role="switch" id="chk_estado">
             <label class="form-check-label" for="chk_estado">Se aprueba los documentos</label>
         </div>
         <textarea class="form-control" id="txt_observacion" placeholder="Observacion..." rows="3"></textarea>
@@ -462,6 +463,57 @@
     }
 
 
+    const f_savetarea4 = () => {
+        let id_tramite = $("#id_tramite_init").html();
+        let id_tarea = $("#id_tarea").val();
+        let id_proceso = $("#id_proceso").val();
+        //let descripcion = $(".ck-content").html();
+        let observacion = $("#txt_observacion").val();
+        let estado_confirmado = $("#chk_estado").is(':checked');
+        console.log(estado_confirmado);
+        if (!estado_confirmado) { //false
+            if (observacion == "") {
+                alert("Debe ingresar un observacion por lo cual no aprueba la documentacion");
+                return;
+            }
+        }
+        let token = $("#csrf-token").val();
+        let datos = {
+            id_tramite,
+            id_proceso,
+            id_tarea,
+            user_session_activa,
+            estado_confirmado,
+            observacion
+        };
+        _AJAX_("/sp_guardar_tarea", "POST", token, datos, 2);
+    }
+
+    const f_send_tarea4 = () => {
+        let estado_confirmado = $("#chk_estado").is(':checked');
+        console.log(estado_confirmado);
+        if (!estado_confirmado) {
+            alert("Check no activado");
+        } else {
+            alert("Aprobado");
+        }
+
+        let id_tramite = $("#id_tramite_init").html();
+        let id_tarea = $("#id_tarea").val();
+        let id_proceso = $("#id_proceso").val();
+        let observacion = $("#txt_observacion").val();
+        let token = $("#csrf-token").val();
+        let datos = {
+            id_tramite,
+            id_proceso,
+            id_tarea,
+            user_session_activa,
+            estado_confirmado,
+            observacion
+        };
+        _AJAX_("/ps_enviar_tarea_4", "POST", token, datos, 7);
+
+    }
     let logFile = document.querySelectorAll("[data-file]");
     for (let item of logFile) {
         item.addEventListener(
