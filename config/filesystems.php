@@ -43,6 +43,14 @@ return [
             'visibility' => 'public',
             'throw' => false,
         ],
+        'documentos' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/Doc_backup'),
+            'url' => env('APP_URL') . '/storage',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+
 
         's3' => [
             'driver' => 's3',

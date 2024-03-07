@@ -14,56 +14,6 @@
         <div class="card">
             <div class="card-body">
 
-                <div class="table-responsive">
-                    <div id="example_wrapper" class="dataTables_wrapper dt-bootstrap5">
-                        <div class="row">
-                            <div class="col-sm-12" id="div_fuentes">
-                                <table id="tbl_fuentes" class="table table-striped table-bordered dataTable"
-                                    style="width: 100%" role="grid" aria-describedby="example_info">
-                                    <thead>
-                                        <tr role="row">
-                                            <th>N</th>
-                                            <th>TIPO</th>
-                                            <th>FECHA REGISTRO</th>
-                                            <th>USUARIO REGISTRO</th>
-                                            <th>ESTADO</th>
-                                            <th>OPCIONES</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($tipos as $f)
-                                            <tr>
-                                                <td>{{ $f->id }}</td>
-                                                <td>{{ $f->descripcion }}</td>
-                                                <td>{{ $f->created_at }}</td>
-                                                <td>{{ $f->usuario_registro }}</td>
-                                                <td>{{ $f->estado }}</td>
-                                                <td><button type="button" class="btn btn-outline-primary"
-                                                        onclick="modal_editar({{ $f->id }},'{{ $f->descripcion }}')"><i
-                                                            class="bx bx-edit me-0"></i></button>
-                                                    <button type="button" class="btn btn-outline-danger"
-                                                        onclick="modal_delete({{ $f->id }})"><i
-                                                            class="bx bx-trash-alt me-0"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <th>N</th>
-                                            <th>FUENTE</th>
-                                            <th>FECHA REGISTRO</th>
-                                            <th>USUARIO REGISTRO</th>
-                                            <th>ESTADO</th>
-                                            <th></th>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

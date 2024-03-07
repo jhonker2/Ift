@@ -1,3 +1,5 @@
+let editor;
+let user_session_activa = $("#SESS_USER_ID").val();
 const show_modal = (modal) => {
     $("#" + modal).modal('show');
 }
@@ -40,18 +42,38 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
                         $("#modal_r_tfuente").modal("hide");
                     }
                 } else if (p == 2) {
-                    if (res.data == "eliminado") {
-                        notif({
-                            msg: "<b>Correcto:</b> Proyecto eliminado",
-                            type: "success",
-                        });
-                        $("#btn-eliminar-proyecto").html(
-                            "<i class='fa fa-save'></i> Eliminar"
-                        );
-                        $("#modal_delete_proyecto").modal("hide");
-
-                        _AJAX_("/get_project", "GET", "", "", 0);
+                    if (res.respuesta) {
+                        alert(res.msm);
+                        $("#id_tramite_init").html(respuesta.id_tramite);
+                    }else{
+                        alert("Error al guardar el tramite");
                     }
+                }else if(p==3){
+                    if(res.respuesta){
+                        Swal.fire(
+                            "Tramite",
+                            "El tramite enviado de manera correcta",
+                            "success"
+                        );
+
+                        window.location.href ='/home';
+
+                    }
+                }else if(p==4){
+                    alert(res);
+                }else if(p==5){
+                    alert("PROCESS DE GUARDAR TAREA "+res);
+                }else if(p==6){
+                    if(res.respuesta){
+                        Swal.fire(
+                            "Tramite",
+                            "El tramite enviado de manera correcta",
+                            "success"
+                        );
+    
+                        window.location.href ='/home';
+                    }
+                    
                 }
             },
         }).fail(function (jqXHR, textStatus, errorthrown) {
@@ -161,7 +183,11 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
                         }else if(data.estado=='P'){
                             html+='<td>PROCESADO</td>'
                         }else if(data.estado=='E'){
-                            html+='<td> <a href="/proceso/'+data.id_proceso+'/'+data.id_tarea+'/'+data.id_tramite+'">EJECUCIÓN</a></td>'
+                            if(data.id_usuario==user_session_activa){
+                                html+='<td> <a href="/proceso/'+data.id_proceso+'/'+data.id_tarea+'/'+data.id_tramite+'">EJECUCIÓN</a></td>'
+                            }else{
+                                html +='<td>EJECUCION</td>'
+                            }
                         }
                         html+='</tr>'
                         id_tramite = data.id_tramite;
@@ -170,6 +196,80 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
                     $("#id_tramite").html(id_tramite);
                     show_modal('modal_tarea_tramite');// modal de tareas tramites
 
+                }else if(p==3){
+                    if(res.respuesta){
+                    let id_tarea_ = $("#id_tarea").val();
+                    if(id_tarea_ == 1){
+                        $(res.tramite).each(function (i, data) {
+                            let f = data.fecha_fin.split(" ");
+                            $("#sel_fuente").val(data.id_fuente);
+                            $("#sel_tipo").val(data.id_tipo_fuente);
+                            $("#responsableId").val(data.responsable);
+                             buscar_empleado(data.responsable);
+                            //$(".ck-content").html(data.descripcion);
+                            editor.setData(data.descripcion)
+                            $("#ip_fecha").val(f[0]);
+    
+                            
+                        });
+                        let lista="";
+                    $(res.archivos).each(function(i,data){
+                        if(data.id_tarea==id_tarea_){
+                            lista +="<li><a href='#' onclick='descargar_archivo(" + data.id_archivo + ")'>" + data.name + "</a></li>"
+                        }
+                    });
+                    $("#lista_file_"+id_tarea_).append(lista)
+                    }else if(id_tarea_==2){
+                        $(res.tramite).each(function (i, data) {
+                            let f = data.fecha_fin.split(" ");
+
+                        $("#s_fuente").html(data.fuente);
+                        $("#s_tipo").html(data.tipo_fuente);
+                        //$("#s_responsale").html(data.responsable);
+                         buscar_empleado_v2(data.responsable);
+                        //$(".ck-content").html(data.descripcion);
+                        $("#s_descripcion").html(data.descripcion);
+                        $("#s_fecha_compromiso").html(f[0]);
+                    });
+                    let lista="";
+                    $(res.archivos).each(function(i,data){
+                        if(data.id_tarea==id_tarea_){
+                            lista ="<li><div class='button_files'><div class=' puntero mr-15' onclick='descargar_archivo(" + data.id_archivo + ")'><span>" + data.name + "</span></div><div class='puntero' onclick='delete_file("+ data.id_archivo+")'><i class='fa-solid fa-circle-xmark rojo'></i></div></div></li>"
+                        }else{
+                            lista ="<li><a href='#' onclick='descargar_archivo(" + data.id_archivo + ")'>" + data.name + "</a></li>"
+                        }
+                        $("#lista_file_"+data.id_tarea).append(lista)
+                    });
+
+                    }else if(id_tarea_==4){
+                        console.log(res);
+                        $(res.tramite).each(function (i, data) {
+                            let f = data.fecha_fin.split(" ");
+                            $("#s_fuente").html(data.fuente);
+                            $("#s_tipo").html(data.tipo_fuente);
+                            buscar_empleado_v2(data.responsable);
+                            $("#s_descripcion").html(data.descripcion);
+                            $("#s_fecha_compromiso").html(f[0]);
+                        });
+                        $(res.archivos).each(function(i,data){
+                            
+                           let  lista ="<li><a href='#' onclick='descargar_archivo(" + data.id_archivo + ")'>" + data.name + "</a></li>"
+                            $("#lista_file_"+data.id_tarea).append(lista)
+                        });
+
+                        $(res.tarea_tramite).each(function(i,data){
+                            if(data.id_tarea==2 && data.estado=='P'){
+                                $("#observacion2").html(data.observacion)   
+                            }
+                         });
+                    }
+                    
+
+                    }
+                }else if(p==4){
+                    if(res.respuesta){
+
+                    }
                 }
             },
         }).fail(function (jqXHR, textStatus, errorthrown) {
@@ -191,3 +291,52 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
         });
     }
 }
+
+const buscar_empleado_v2 = async (cedula) =>{
+    $.ajax({
+        url: `/get_empleados?nombres=${cedula}`,
+        type: 'GET',
+        dataType: 'json',
+        success: function (data) {
+            //var resultList = document.getElementById('resultList');
+            //resultList.innerHTML = ''; // Limpiar resultados anteriores
+            data.forEach(item => {
+                $("#s_responsable").html(`${item.NOMBRES} (${item.CARGO})`)
+                //resultList.innerHTML += `<option data-id="${item.IDENTIFICACION}" value="${item.NOMBRES} (${item.CARGO})"></option>`;
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error('Error:', error);
+        }
+    });
+}
+
+const buscar_empleado = async (cedula) =>{
+    $.ajax({
+        url: `/get_empleados?nombres=${cedula}`,
+        type: 'GET',
+        dataType: 'json',
+        success: function (data) {
+            //var resultList = document.getElementById('resultList');
+            //resultList.innerHTML = ''; // Limpiar resultados anteriores
+            data.forEach(item => {
+                $("#nombreInput").val(`${item.NOMBRES} (${item.CARGO})`)
+                //resultList.innerHTML += `<option data-id="${item.IDENTIFICACION}" value="${item.NOMBRES} (${item.CARGO})"></option>`;
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error('Error:', error);
+        }
+    });
+}
+
+
+const descargar_archivo = (id_archivo) =>{
+
+}
+
+const delete_file = (id_archivo) => {
+    _AJAX_('/sp_delete_file/'+id_archivo,'GET','','',4);
+
+}
+

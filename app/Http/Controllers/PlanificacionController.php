@@ -16,6 +16,11 @@ use DB;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
+use File;
+use Illuminate\Support\Facades\Storage;
+
+
+
 class PlanificacionController extends Controller
 {
     public function index()
@@ -32,7 +37,8 @@ class PlanificacionController extends Controller
             $ejecucion = DB::select('select count(*) as total from tbl_tramites  where estado=1');
             $compromisos = DB::select('SELECT c.id, f.descripcion, tf.descripcion, "dias_retrasado" ,c.fecha_inicio,c.responsable, "empleado","cargo", c.fecha_fin, c.descripcion, c.estado FROM tbl_tramites c
             INNER JOIN tbl_fuentes f on f.id= c.id_fuente
-            INNER JOIN tbl_tipos_fuentes tf on tf.id = c.id_tipo_fuente');
+            INNER JOIN tbl_tipos_fuentes tf on tf.id = c.id_tipo_fuente
+            WHERE c.estado=1');
 
             $usuarios = DB::connection('mysql_aflow')->select('select * from v_usuario_activo');
             //$cc=[];
@@ -62,7 +68,8 @@ class PlanificacionController extends Controller
             $completados = $completados[0]->total;
             $ejecucion = $ejecucion[0]->total;
             //  return $compromisos;
-            return view('Sigop.Tramite.index', compact('compromisos', 'completados', 'ejecucion'));
+            $botones = [];
+            return view('Sigop.Tramite.index', compact('compromisos', 'completados', 'ejecucion', 'botones'));
         } else {
             return Redirect::to('/login');
         }
@@ -134,21 +141,27 @@ class PlanificacionController extends Controller
         return response()->json(['message' => 'Proceso guardado en sesión']);
     }
 
-    public function proceso()
+    public function proceso($proceso, $tarea, $tramite = 0)
     {
 
         if (Session::get('SESSION_CEDULA')) {
             Session::put('SESSION_PAGE', 'Home');
-            // $datosSesion = session()->all();
             $tiposTramite = DB::table('tbl_tipos_fuentes')->where('estado', 1)->get();
             $fuentes = DB::table('tbl_fuentes')->where('estado', 1)->get();
+            $procesos = DB::table('tbl_procesos')->where('id', $proceso)->get();
+            $tareas = DB::table('tbl_tareas')->where('id', $tarea)->get();
+            $tramite_data = DB::table('tbl_tramites')->where('id', $tramite)->get();
             Session::put('SESSION_PAGE', 'COMPROMISOS');
-            return view('Sigop.Tramite.proceso', compact('fuentes', 'tiposTramite'));
+            $botones = DB::select('select c.id, c.id_proceso, c.id_tarea, c.tipo, c.etiqueta, c.icono, f.descripcion, f.query from tbl_campos c
+            LEFT JOIN tbl_funciones f ON f.id_campo = c.id
+            where c.id_proceso =? and c.id_tarea=?', [$proceso, $tarea]);
+            //$botones = DB::table('tbl_campos')->where('id_proceso', $proceso)->where('id_tarea', $tarea)->get();
+
+            $init = DB::select('select * from tbl_funciones where id_proceso = ? and id_tarea = ? and ISNULL(id_campo)', [$proceso, $tarea]);
+            return view('Sigop.Tramite.proceso', compact('fuentes', 'tiposTramite', 'procesos', 'tareas', 'tramite_data', 'tramite', 'tramite_data', 'botones', 'init'));
         } else {
             return Redirect::to('/login');
         }
-        // Aquí continúas con el resto de tu lógica existente
-
     }
     public function mistramites()
     {
@@ -326,7 +339,9 @@ class PlanificacionController extends Controller
         if (Session::get('SESSION_CEDULA')) {
             Session::put('SESSION_PAGE', 'Configuración de fuentes');
             $fuentes = DB::table('tbl_fuentes')->where('estado', 1)->get();
-            return view('Sigop.Configuraciones.fuentes', compact('fuentes'));
+            $botones = [];
+
+            return view('Sigop.Configuraciones.fuentes', compact('fuentes', 'botones'));
         } else {
             return Redirect::to('/login');
         }
@@ -377,8 +392,8 @@ class PlanificacionController extends Controller
             Session::put('SESSION_PAGE', 'Configuración tipo de fuentes');
 
             $tipos = DB::table('tbl_tipos_fuentes')->where('estado', 1)->get();
-
-            return view('Sigop.Configuraciones.tiposfuentes', compact('tipos'));
+            $botones = [];
+            return view('Sigop.Configuraciones.tiposfuentes', compact('tipos', 'botones'));
         } else {
             return Redirect::to('/login');
         }
@@ -406,29 +421,245 @@ class PlanificacionController extends Controller
         }
     }
 
+    public function guardar_tramite($id_tarea, $id_proceso, $fuente, $tipo, $responsable, $fecha_fin, $descripcion)
+    {
+        $date = Carbon::now();
+
+        $tramite = DB::table('tbl_tramites')->insertGetId([
+            'id_proceso' => $id_proceso,
+            'id_fuente' => $fuente,
+            'id_tipo_fuente' => $tipo,
+            'fecha_inicio' => $date,
+            'fecha_fin' => $fecha_fin,
+            'responsable' => $responsable,
+            'descripcion' => $descripcion,
+            'usuario_registro' => Session::get('SESSION_CEDULA'),
+            'estado' => 0,
+            'created_at' => $date,
+
+        ]);
+        if ($tramite > 0) {
+            // $tarea
+            $tarea_Tramite = DB::table('tbl_tareas_tramites')->insertGetId([
+                "id_tramite" => $tramite,
+                "id_proceso" => $id_proceso,
+                "id_tarea" => $id_tarea,
+                "id_usuario" => Session::get('SESSION_CEDULA'),
+                "estado" => "E",
+                'fecha_ejecucion' => $date,
+                'fecha_asignacion' => $date,
+
+            ]);
+            return $tramite;
+        } else {
+            return $tramite;
+        }
+    }
+
+    public function update_tramite($id_tramite, $id_tarea, $id_proceso, $fuente, $tipo, $responsable, $fecha_fin, $descripcion)
+    {
+        $date = Carbon::now();
+
+        $tramite = DB::table('tbl_tramites')->where('id', $id_tramite)
+            ->update([
+                'id_proceso' => $id_proceso,
+                'id_fuente' => $fuente,
+                'id_tipo_fuente' => $tipo,
+                'fecha_fin' => $fecha_fin,
+                'responsable' => $responsable,
+                'descripcion' => $descripcion,
+                'estado' => 0,
+            ]);
+
+        if ($tramite > 0) {
+            // $tarea
+            /* $tarea_Tramite = DB::table('tbl_tareas_tramites')->insertGetId([
+                "id_tramite" => $tramite,
+                "id_proceso" => $id_proceso,
+                "id_tarea" => $id_tarea,
+                "id_usuario" => Session::get('SESSION_CEDULA'),
+                "estado" => "E",
+                'fecha_ejecucion' => $date,
+                'fecha_asignacion' => $date,
+
+            ]);*/
+            return $tramite;
+        } else {
+            return $tramite;
+        }
+    }
+
+    public function upload_file_ftp(Request $r)
+    {
+        $date_name = Carbon::now();
+        $date_name = $date_name->format('dmYhis');
+
+        $tramite_existe = DB::table('tbl_tramites')->where('id', $r->id_tramite)->get();
+        if ($tramite_existe == '[]') {
+            $id_tramite = $this->guardar_tramite($r->id_tarea, $r->id_proceso, $r->fuente, $r->tipo, $r->fecha_fin, $r->responsableId, $r->descripcion);
+
+            if ($id_tramite == 0) {
+                return response()->json(['error' => 'No se pudeo crear el tramite'], 400);
+            } else {
+                if (!$r->hasFile('file')) {
+                    return response()->json(['error' => 'No file uploaded.'], 400);
+                }
+
+                $file = $r->file('file');
+                $type = $file->getClientOriginalExtension();
+                $filename = $id_tramite . '_' . $date_name . '.' . $type;
+                $name_origin = $file->getClientOriginalName();
+
+                $ftp = Storage::disk('documentos')->put($filename, File::get($file));
+                if ($ftp) {
+                    $date = Carbon::now();
+                    $t_archivo =  DB::table("tbl_archivo")->insertGetId([
+                        "tipo"     => $type,
+                        "ruta"     => '/Doc_backup/' . $filename,
+                        "name"     => $name_origin,
+                        "created_at"     => $date,
+                        "user_created" => Session::get('SESSION_CEDULA')
+                    ]);
+
+                    if ($t_archivo > 0) {
+                        $tramite_archivo = DB::table('tbl_tramites_archivos')->insertGetId([
+                            "id_tramite" => $id_tramite,
+                            "id_archivo" => $t_archivo,
+                            "id_tarea"   => $r->id_tarea,
+                            "created_at" => $date
+                        ]);
+                        return response()->json(['registro' => true, 'id_tramite' => $id_tramite, 'id_archivo' => $t_archivo, 'name_archivo' => $name_origin], 200);
+                    }
+                } else {
+                    return response()->json(['registro' => false, 'error' => 'File upload failed.'], 500);
+                }
+            }
+            //llamar a la funcion insert_tramite
+        } else {
+            $up_tramite = $this->update_tramite($r->id_tramite, $r->id_tarea, $r->id_proceso, $r->fuente, $r->tipo, $r->responsableId, $r->fecha_fin, $r->descripcion);
+
+            if (!$r->hasFile('file')) {
+                return response()->json(['error' => 'No file uploaded.'], 400);
+            }
+
+            $file = $r->file('file');
+            $type = $file->getClientOriginalExtension();
+            $filename = $r->id_tramite . '_' . $date_name . '.' . $type;
+            $name_origin = $file->getClientOriginalName();
+
+            $ftp = Storage::disk('documentos')->put($filename, File::get($file));
+            if ($ftp) {
+                $date = Carbon::now();
+                $t_archivo =  DB::table("tbl_archivo")->insertGetId([
+                    "tipo"     => $type,
+                    "ruta"     => '/Doc_backup/' . $filename,
+                    "name"     => $name_origin,
+                    "created_at"     => $date,
+                    "user_created" => Session::get('SESSION_CEDULA')
+                ]);
+
+                if ($t_archivo > 0) {
+                    $tramite_archivo = DB::table('tbl_tramites_archivos')->insertGetId([
+                        "id_tramite" => $r->id_tramite,
+                        "id_archivo" => $t_archivo,
+                        "id_tarea"   => $r->id_tarea,
+                        "created_at" => $date
+                    ]);
+                    return response()->json(['registro' => true, 'id_tramite' => $r->id_tramite, 'id_archivo' => $t_archivo, 'name_archivo' => $name_origin], 200);
+                }
+            } else {
+                return response()->json(['registro' => false, 'error' => 'File upload failed.'], 500);
+            }
+        }
+        // Validar que el archivo esté presente
+
+
+
+    }
+
+    public function upload_file_ftp_2(Request $r)
+    {
+        $date_name = Carbon::now();
+        $date_name = $date_name->format('dmYhis');
+
+        //$up_tramite = $this->update_tramite($r->id_tramite, $r->id_tarea, $r->id_proceso, $r->fuente, $r->tipo, $r->responsableId, $r->fecha_fin, $r->descripcion);
+
+        if (!$r->hasFile('file')) {
+            return response()->json(['error' => 'No file uploaded.'], 400);
+        }
+
+        $file = $r->file('file');
+        $type = $file->getClientOriginalExtension();
+        $filename = $r->id_tramite . '_' . $date_name . '.' . $type;
+        $name_origin = $file->getClientOriginalName();
+
+        $ftp = Storage::disk('documentos')->put($filename, File::get($file));
+        if ($ftp) {
+            $date = Carbon::now();
+            $t_archivo =  DB::table("tbl_archivo")->insertGetId([
+                "tipo"     => $type,
+                "ruta"     => '/Doc_backup/' . $filename,
+                "name"     => $name_origin,
+                "created_at"     => $date,
+                "user_created" => Session::get('SESSION_CEDULA')
+            ]);
+
+            if ($t_archivo > 0) {
+                $tramite_archivo = DB::table('tbl_tramites_archivos')->insertGetId([
+                    "id_tramite" => $r->id_tramite,
+                    "id_archivo" => $t_archivo,
+                    "id_tarea"   => $r->id_tarea,
+                    "created_at" => $date
+                ]);
+                return response()->json(['registro' => true, 'id_tramite' => $r->id_tramite, 'id_archivo' => $t_archivo, 'name_archivo' => $name_origin], 200);
+            }
+        } else {
+            return response()->json(['registro' => false, 'error' => 'File upload failed.'], 500);
+        }
+        // Validar que el archivo esté presente
+
+
+
+    }
+
 
     public function store_compromisos(Request $r)
     {
         $date = Carbon::now();
+        if ($r->id_tramite == '0') {
+            $fechaf = new Carbon($r->fecha_fin);
+            $id_tramite = $this->guardar_tramite($r->id_tarea, $r->id_proceso, $r->fuente, $r->tipo, $r->responsableId, $fechaf, $r->descripcion);
+            /*guardar_tramite
+            // return $fechaf;
+            $tramite = DB::table('tbl_tramites')->insertGetId([
+                'id_proceso' => $r->id_proceso,
+                'id_fuente' => $r->fuente,
+                'id_tipo_fuente' => $r->tipo,
+                'fecha_inicio' => $date,
+                'fecha_fin' => $fechaf,
+                'responsable' => $r->responsableId,
+                'descripcion' => $r->descripcion,
+                'usuario_registro' => Session::get('SESSION_CEDULA'),
+                'estado' => 0,
+                'created_at' => $date,
 
-        $fechaf = new Carbon($r->fecha_fin);
-        // return $fechaf;
-        $fuentes = DB::table('tbl_tramites')->insertGetId([
-            'id_fuente' => $r->fuente,
-            'id_tipo_fuente' => $r->tipo,
-            'fecha_inicio' => $date,
-            'fecha_fin' => $fechaf,
-            'responsable' => $r->responsableId,
-            'descripcion' => $r->descripcion,
-            'usuario_registro' => Session::get('SESSION_CEDULA'),
-            'estado' => 1,
-            'created_at' => $date,
-
-        ]);
-        if ($fuentes > 0) {
-            return response()->json(["respuesta" => true]);
+            ]);*/
+            if ($id_tramite > 0) {
+                return response()->json(["respuesta" => true, 'id_tramite' => $id_tramite, 'msm' => 'Cambios guardados correctamente']);
+            } else {
+                return response()->json(["respuesta" => false]);
+            }
         } else {
-            return response()->json(["respuesta" => false]);
+            $fechaf = new Carbon($r->fecha_fin);
+            $up_tramite = $this->update_tramite($r->id_tramite, $r->id_tarea, $r->id_proceso, $r->fuente, $r->tipo, $r->responsableId, $fechaf, $r->descripcion);
+            //return $up_tramite;
+            if ($up_tramite > 0) {
+                return response()->json(["respuesta" => true, 'id_tramite' => $r->id_tramite, 'msm' => 'Cambios guardados correctamente']);
+            } else if ($up_tramite == 0) {
+                return response()->json(["respuesta" => true, 'id_tramite' => $r->id_tramite, 'msm' => 'Sin cambios que guardar']);
+            } else {
+                return response()->json(["respuesta" => false]);
+            }
         }
     }
 
@@ -459,12 +690,168 @@ class PlanificacionController extends Controller
 
                 Session::put('SESSION_PAGE', 'Compromisos>REGISTRO DE COMPROMISOS');
                 $tipos = DB::table('tbl_tipos_fuentes')->where('estado', 1)->get();
-                return view('Sigop.FRM_Tareas.compromisos', compact('tipos', 'tramite', 'proceso', 'tarea'));
+                $botones = DB::table('tbl_campos')->where('id_proceso', $proceso)->where('id_tarea', $tarea)->get();
+
+                return view('Sigop.FRM_Tareas.compromisos', compact('tipos', 'tramite', 'proceso', 'tarea', 'botones'));
             } else {
                 return Redirect::to('/home');
             }
         } else {
             return Redirect::to('/login');
+        }
+    }
+
+    public function borrador()
+    {
+        if (Session::get('SESSION_CEDULA')) {
+            Session::put('SESSION_PAGE', 'Borradores');
+            $tramites = DB::select('SELECT t.id,t.id_proceso,tt.id_tarea,t.responsable,t.usuario_registro,t.estado, t.created_at  FROM tbl_tramites t
+            INNER JOIN tbl_tareas_tramites tt ON tt.id_tramite = t.id
+            where t.estado=0 and t.usuario_registro=?', [Session::get('SESSION_CEDULA')]); //DB::table('tbl_tramites')->where('estado', 0)->where('usuario_registro', Session::get('SESSION_CEDULA'))->get();
+            $botones = [];
+            return view('Sigop.Borrador.index', compact('tramites', 'botones'));
+        } else {
+            return Redirect::to('/login');
+        }
+    }
+
+    public function open_tramite_borrador($id_tramite, $id_tarea)
+    {
+        //$tramite = DB::table('tbl_tramites')->where('id', $id_tramite)->get();
+        $tramite = DB::select('SELECT t.id,t.id_proceso,t.id_fuente,t.id_tipo_fuente,t.fecha_inicio,t.fecha_fin, t.fecha_ext,t.responsable,t.descripcion,t.usuario_registro,t.estado,
+        f.descripcion as fuente, tf.descripcion as tipo_fuente FROM tbl_tramites t 
+        INNER JOIN tbl_fuentes f ON f.id = t.id_fuente
+        INNER JOIN tbl_tipos_fuentes tf ON tf.id = t.id_tipo_fuente
+        WHERE t.id = ?', [$id_tramite]);
+
+        $tarea_tramite = DB::select("select * from tbl_tareas_tramites where id_tramite=? and id_tarea=? and estado = 'E'", [$id_tramite, $id_tarea]);
+        $archivos = DB::select('select * from tbl_tramites_archivos ta
+        INNER JOIN tbl_archivo a ON a.id=ta.id_archivo
+        where ta.id_tramite = ?', [$id_tramite]);
+        return response()->json(["respuesta" => true, 'tramite' => $tramite, 'archivos' => $archivos, 'tarea_tramite' => $tarea_tramite]);
+    }
+    public function open_tramite($id_tramite)
+    {
+        //$tramite = DB::table('tbl_tramites')->where('id', $id_tramite)->get();
+        $tramite = DB::select('SELECT t.id,t.id_proceso,t.id_fuente,t.id_tipo_fuente,t.fecha_inicio,t.fecha_fin, t.fecha_ext,t.responsable,t.descripcion,t.usuario_registro,t.estado,
+        f.descripcion as fuente, tf.descripcion as tipo_fuente FROM tbl_tramites t 
+        INNER JOIN tbl_fuentes f ON f.id = t.id_fuente
+        INNER JOIN tbl_tipos_fuentes tf ON tf.id = t.id_tipo_fuente
+        WHERE t.id = ?', [$id_tramite]);
+
+        $tarea_tramite = DB::select("select * from tbl_tareas_tramites where id_tramite=?", [$id_tramite]);
+        $archivos = DB::select('select * from tbl_tramites_archivos ta
+        INNER JOIN tbl_archivo a ON a.id=ta.id_archivo
+        where ta.id_tramite = ?', [$id_tramite]);
+        return response()->json(["respuesta" => true, 'tramite' => $tramite, 'archivos' => $archivos, 'tarea_tramite' => $tarea_tramite]);
+    }
+
+    public function ps_enviar_tarea_2(Request $r)
+    {
+
+        $date = Carbon::now();
+
+        $tarea_siguiente = DB::select('select id_tarea_destino FROM tbl_caminos where id_proceso=? and id_tarea_origen=?', [$r->id_proceso, $r->id_tarea]);
+        $usuario_responsable = DB::select("select * from tbl_tareas_tramites where id_tramite=? and id_tarea=1 and estado = 'P'", [$r->id_tramite]);
+        // return  $usuario_responsable[0]->id_usuario;
+        $procesar = DB::table('tbl_tareas_tramites')
+            ->where('id_tramite', $r->id_tramite)
+            ->where('id_proceso', $r->id_proceso)
+            ->where('id_tarea', $r->id_tarea)
+            ->where('id_usuario', $r->user_session_activa)
+            ->update([
+                'estado' => 'P',
+                'fecha_fin' => $date
+            ]);
+
+        if ($procesar >= 1) {
+            $insert_tarea = DB::table('tbl_tareas_tramites')->insertGetId([
+                "id_tramite" => $r->id_tramite,
+                "id_proceso" => $r->id_proceso,
+                "id_tarea" => $tarea_siguiente[0]->id_tarea_destino,
+                "id_usuario" => $usuario_responsable[0]->id_usuario,
+                "estado" => "E",
+                'fecha_ejecucion' => $date,
+                'fecha_asignacion' => $date,
+            ]);
+            return response()->json(["respuesta" => true, 'sms' => "tramite enviado correctamente"]);
+        }
+    }
+    public function ps_enviar_tramite(Request $r)
+    {
+        $date = Carbon::now();
+
+        $tarea_siguiente = DB::select('select id_tarea_destino FROM tbl_caminos where id_proceso=? and id_tarea_origen=?', [$r->id_proceso, $r->id_tarea]);
+
+        $procesar = DB::table('tbl_tareas_tramites')
+            ->where('id_tramite', $r->id_tramite)
+            ->where('id_proceso', $r->id_proceso)
+            ->where('id_tarea', $r->id_tarea)
+            ->update([
+                'estado' => 'P',
+            ]);
+
+        if ($procesar >= 1) {
+            $insert_tarea = DB::table('tbl_tareas_tramites')->insertGetId([
+                "id_tramite" => $r->id_tramite,
+                "id_proceso" => $r->id_proceso,
+                "id_tarea" => $tarea_siguiente[0]->id_tarea_destino,
+                "id_usuario" => $r->responsableId,
+                "estado" => "E",
+                'fecha_ejecucion' => $date,
+                'fecha_asignacion' => $date,
+            ]);
+
+            if ($insert_tarea > 0) {
+                $tram = DB::table('tbl_tramites')
+                    ->where('id', $r->id_tramite)
+                    ->where('id_proceso', $r->id_proceso)
+                    ->update([
+                        'estado' => 1,
+                    ]);
+
+                return response()->json(["respuesta" => true, 'sms' => "tramite enviado correctamente"]);
+            }
+        }
+    }
+
+    public function sp_devolver_tarea(Request $r)
+    {
+        $id_tarea_devolver = DB::select('select IFNULL(id_tarea_origen, 0) as id_tarea from  tbl_caminos where id_proceso=? and id_tarea_destino=?', [$r->id_proceso, $r->id_tarea]);
+
+        return $id_tarea_devolver;
+    }
+
+    public function sp_guardar_tarea(Request $r)
+    {
+        $tram = DB::table('tbl_tareas_tramites')
+            ->where('id_tramite', $r->id_tramite)
+            ->where('id_proceso', $r->id_proceso)
+            ->where('id_tarea', $r->id_tarea)
+            ->where('id_usuario', $r->user_session_activa)
+            ->update([
+                'observacion' => $r->descripcion,
+            ]);
+
+        if ($tram == 1) {
+            return response()->json(["respuesta" => true, 'sms' => "Tarea Guardada correctamente"]);
+        } else {
+            return response()->json(["respuesta" => false, 'sms' => "Error al Guardar la tarea"]);
+        }
+    }
+
+    public function sp_delete_file($id_archivo)
+    {
+        $archivo = DB::table('tbl_archivo')->where('id', $id_archivo)->get();
+        foreach ($archivo as $a) {
+            $de = Storage::disk('documentos')->delete($a->ruta);
+            if ($de == 1) {
+                DB::table('tbl_archivo')->where('id', $id_archivo)->delete();
+                DB::table('tbl_tramites_archivos')->where('id_archivo', $id_archivo)->delete();
+                return response()->json(["respuesta" => true, 'sms' => "ok"]);
+            } else {
+                return response()->json(["respuesta" => false, 'sms' => "Error"]);
+            }
         }
     }
 }

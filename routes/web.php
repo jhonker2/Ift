@@ -112,7 +112,6 @@ Route::get('/dashboard', function () {
 
 Route::post('/guardar_tarea', [CrearProcesoController::class, 'store'])->name('guardar_tarea');
 
-Route::get('/proceso/compromiso', [PlanificacionController::class, 'proceso']);
 
 Route::get('/guardar-proceso-en-sesion/{proceso}', [PlanificacionController::class, 'guardarProcesoEnSesion'])->name('guardarProcesoEnSesion');
 
@@ -188,5 +187,31 @@ Route::get('get_tipos_fuentes', [PlanificacionController::class, 'get_tipos_fuen
 /**COMPROMISOS */
 
 Route::post('store/compromisos', [PlanificacionController::class, 'store_compromisos']);
+Route::post('enviar_tramite', [PlanificacionController::class, 'ps_enviar_tramite']);
 Route::get('get_tareas_tramites/{id}', [PlanificacionController::class, 'tarea_tramites']);
-Route::get('proceso/{proceso}/{tarea}/{tramite}', [PlanificacionController::class, 'FRM_COMPROMISO']);
+//Route::get('proceso/{proceso}/{tarea}/{tramite}', [PlanificacionController::class, 'FRM_COMPROMISO']);
+Route::get('proceso/{proceso}/{tarea}/{tramite?}', [PlanificacionController::class, 'proceso']);
+
+Route::post('uplodad/file', [PlanificacionController::class, 'upload_file_ftp']);
+Route::post('uplodad/file_registro', [PlanificacionController::class, 'upload_file_ftp_2']);
+
+
+Route::post('ps_enviar_tarea_2', [PlanificacionController::class, 'ps_enviar_tarea_2']);
+/*BORRADOR*/
+
+Route::get('borrador', [PlanificacionController::class, 'borrador']);
+
+Route::get('open/{id_tramite}/{id_tarea}/tramite', [PlanificacionController::class, 'open_tramite_borrador']);
+Route::get('open/{id_tramite}/tramite', [PlanificacionController::class, 'open_tramite']);
+
+
+/**DEVOLVER TAREA */
+Route::post('sp_devolver_tarea', [PlanificacionController::class, 'sp_devolver_tarea']);
+
+
+/**GUARDAR TAREA */
+Route::post('sp_guardar_tarea', [PlanificacionController::class, 'sp_guardar_tarea']);
+
+
+/*FILE*/
+Route::get('sp_delete_file/{id_archivo}', [PlanificacionController::class, 'sp_delete_file']);

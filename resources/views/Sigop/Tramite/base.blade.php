@@ -33,8 +33,10 @@
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 	<!-- Font Awesome -->
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css">
+	<script src="https://kit.fontawesome.com/2afebe029b.js" crossorigin="anonymous"></script>
 	<input type="hidden" name="csrf-token" value="{{ csrf_token() }}" id="csrf-token">
 	<title>PORTOAGUAS EP</title>
+
 	<style>
 		/* Estilos personalizados para expandir el modal */
 		.wf-item {
@@ -79,7 +81,32 @@
 			color: var(--bs-table-color);
 			border-color: var(--bs-table-border-color);
 		}
+
+		.cont_btn {
+			position: absolute;
+			right: 0;
+			margin-right: 17em;
+
+		}
+
+		.flex {
+			display: flex;
+		}
+
+		.ml5 {
+			margin-left: 5px;
+		}
+
+		.btn_auxliar {
+			padding: 10px;
+			cursor: pointer;
+		}
+
+		hr {
+			border-top: 1px solid rgb(0 0 0 / 82%) !important;
+		}
 	</style>
+	<input type="hidde" id="SESS_USER_ID" value="{{Session::get('SESSION_CEDULA')}}">
 	@yield('css')
 </head>
 
@@ -89,8 +116,6 @@
 		<!--sidebar wrapper -->
 		<div class="sidebar-wrapper" data-simplebar="true">
 			<div class="sidebar-header">
-				<div>
-				</div>
 				<div>
 					<a href="/home">
 						<h4 class="logo-text">PORTOAGUAS </h4>
@@ -107,6 +132,12 @@
 
 						<div class="menu-title">Mis Opciones</div>
 					</a>
+					<ul>
+						<li><a href="/proceso/1/1"><i class='bx bx-radio-circle'></i>
+								Nuevos</a></li>
+						<li><a href="/borrador"><i class='bx bx-radio-circle'></i>
+								Borrador</a></li>
+					</ul>
 				</li>
 				<li>
 
@@ -135,14 +166,7 @@
 						</li>
 					</ul>
 					@endif
-					<ul>
-
-
-
-					</ul>
-
 				</li>
-
 				<li>
 					<a class="has-arrow" href="javascript:;">
 						<div class="parent-icon"><i class="bx bx-repeat"></i>
@@ -150,19 +174,10 @@
 						<div class="menu-title">Procesos</div>
 					</a>
 					<ul>
-						<li><a href="proceso/compromiso"><i class='bx bx-radio-circle'></i>
-								CREAR COMPROMISOS</a></li>
+						<li><a href="/proceso/1/1"><i class='bx bx-radio-circle'></i>
+								Compromisos</a></li>
 					</ul>
-
-
 				</li>
-
-
-
-
-
-
-
 			</ul>
 			<!--end navigation-->
 		</div>
@@ -173,18 +188,12 @@
 				<nav class="navbar navbar-expand gap-3">
 					<div class="mobile-toggle-menu"><i class='bx bx-menu'></i>
 					</div>
-
 					<div class="search-bar d-lg-block d-none" data-bs-toggle="modal" data-bs-target="#SearchModal">
 						<a href="avascript:;" class="btn d-flex align-items-center"><i
 								class="bx bx-search"></i>Search</a>
 					</div>
-
 					<div class="top-menu ms-auto">
 						<ul class="navbar-nav align-items-center gap-1">
-
-
-
-
 							<li class="nav-item dropdown dropdown-app">
 								<a class="nav-link dropdown-toggle dropdown-toggle-nocaret" data-bs-toggle="dropdown"
 									href="javascript:;"><i class='bx bx-grid-alt'></i></a>
@@ -277,33 +286,16 @@
 							<li class="nav-item dropdown dropdown-large">
 
 								<div class="dropdown-menu dropdown-menu-end">
-
 									<div class="header-notifications-list">
-
-
-
-
-
-
 										<a class="dropdown-item" href="javascript:;">
-
 										</a>
-
 									</div>
-
 								</div>
 							</li>
 							<li class="nav-item dropdown dropdown-large">
-
 								<div class="dropdown-menu dropdown-menu-end">
-
 									<div class="header-message-list">
-
-
-
-
 									</div>
-
 								</div>
 							</li>
 						</ul>
@@ -569,36 +561,110 @@
 				</div>
 			</div>
 
+			<!-- MODAL REASIGNAR-->
+			<div class="modal fade" id="modal_reasignar" tabindex="-1" style="display: none;" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Reasignar Tramite</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<div class="col-md-12">
+								<select class="form-select mb-3" aria-label="Default select example">
+									<option selected="">Open this select menu</option>
+									<option value="1">One</option>
+									<option value="2">Two</option>
+									<option value="3">Three</option>
+								</select>
+								<div class="col-md-12">
+									<textarea class="form-control" id="ip_observacion_reasignar"
+										placeholder="Observacion..." rows="3"></textarea>
+									<div class="form-check">
+										<input class="form-check-input" type="checkbox" id="ip_ace_reasignar">
+										<label class="form-check-label" for="ip_ace_reasignar">Estoy seguro(a) de que
+											deseo
+											devolver
+											la tarea</label>
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+								<button type="button" class="btn btn-primary" id="btn_s_fuente"
+									onclick="save_fuente()">Guardar</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal fade" id="modal_devolver" tabindex="-1" style="display: none;" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Devolver Tarea</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<div class="col-md-12">
+								<textarea class="form-control" id="ip_observacion_devolver" placeholder="Observacion..."
+									rows="3"></textarea>
+								<div class="form-check">
+									<input class="form-check-input" type="checkbox" id="ip_ace_devolver">
+									<label class="form-check-label" for="ip_ace_devolver">Estoy seguro(a) de que deseo
+										devolver
+										la tarea</label>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+							<button type="button" class="btn btn-primary" id="btn_devolver"
+								onclick="devolver_tramite()">Devolver</button>
+						</div>
+					</div>
+				</div>
+			</div>
 
 		</header>
 		<!--end header -->
 		<!--start page wrapper -->
 		<div class="page-wrapper">
-			<div class="page-content">
+			<div class="page-content2">
 				<!--breadcrumb-->
-				<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+				<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3 cabe_control">
 					<div class="breadcrumb-title pe-3">{{session('SESSION_PAGE','null')}}</div>
-					<div class="ps-3">
-						<nav aria-label="breadcrumb">
-							<ol class="breadcrumb mb-0 p-0">
-								<li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a>
-								</li>
-							</ol>
+					<div class="ps-3 flex">
+						@foreach($botones as $b)
+						@if($b->tipo=='B')
+						<div class="ml5 btn_auxliar" onclick="{{$b->query}}">
+							<span>
+								@php
+								echo($b->icono);
+								@endphp
+							</span>
+							<span>{{$b->etiqueta}}</span>
+						</div>
+						@endif
+						@endforeach
+					</div>
+					@if(session('SESSION_PAGE')=='COMPROMISOS')
+					<div class="cont_btn">
+						@foreach($botones as $b)
+						@if($b->tipo=='A')
+						<button type="button" class="btn btn-primary px-5" id="btn_save_compromiso"
+							onclick="{{$b->query}}">@php echo($b->icono); @endphp {{$b->etiqueta}}</button>
+						@endif
+						@endforeach
 
 					</div>
+					@endif
+
 				</div>
 				<div>
 					@yield('content')
-
-					@if(isset($datosSesion))
-					<ul>
-						@foreach($datosSesion as $clave => $valor)
-						<li><strong>{{ $clave }}:</strong> {{ is_array($valor) ? json_encode($valor) : $valor }}</li>
-						@endforeach
-					</ul>
-					@endif
 				</div>
-
 			</div>
 		</div>
 		<!--end page wrapper -->
@@ -609,7 +675,7 @@
 				class='bx bxs-up-arrow-alt'></i></a>
 		<!--End Back To Top Button-->
 		<footer class="page-footer">
-			<p class="mb-0">Copyright © 2023. PORTOAGUAS EP.</p>
+			<p class="mb-0">Copyright © 2024. PORTOAGUAS EP.</p>
 		</footer>
 	</div>
 
@@ -851,32 +917,7 @@
 	<!--plugins-->
 	<script>
 
-		document.getElementById('nombreInput').addEventListener('input', function () {
-			var selectedOption = document.querySelector(`#resultList option[value="${this.value}"]`);
-			var responsableId = selectedOption ? selectedOption.getAttribute('data-id') : '';
-			document.getElementById('responsableId').value = responsableId;
-		});
 
-		document.getElementById('nombreInput').addEventListener('keyup', function () {
-			var query = this.value;
-			if (query.length >= 2) {
-				$.ajax({
-					url: `/get_empleados?nombres=${query}`,
-					type: 'GET',
-					dataType: 'json',
-					success: function (data) {
-						var resultList = document.getElementById('resultList');
-						resultList.innerHTML = ''; // Limpiar resultados anteriores
-						data.forEach(item => {
-							resultList.innerHTML += `<option data-id="${item.IDENTIFICACION}" value="${item.NOMBRES} (${item.CARGO})"></option>`;
-						});
-					},
-					error: function (xhr, status, error) {
-						console.error('Error:', error);
-					}
-				});
-			}
-		});
 
 		$(document).ready(function () {
 			$('#workflowModal').on('shown.bs.modal', function () {
