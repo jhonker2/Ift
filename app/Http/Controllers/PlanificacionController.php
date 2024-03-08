@@ -32,13 +32,22 @@ class PlanificacionController extends Controller
 
         if (Session::get('SESSION_CEDULA')) {
             Session::put('SESSION_PAGE', 'Home');
-
             $completados = DB::select('select count(*) as total from tbl_tramites  where estado=2');
             $ejecucion = DB::select('select count(*) as total from tbl_tramites  where estado=1');
-            $compromisos = DB::select('SELECT c.id, f.descripcion, tf.descripcion, "dias_retrasado" ,c.fecha_inicio,c.responsable, "empleado","cargo", c.fecha_fin, c.descripcion, c.estado FROM tbl_tramites c
-            INNER JOIN tbl_fuentes f on f.id= c.id_fuente
-            INNER JOIN tbl_tipos_fuentes tf on tf.id = c.id_tipo_fuente
-            WHERE c.estado=1');
+            if (Session::get('SESSION_ROL') == 'ROL_PL_SIGOP' || Session::get('SESSION_ROL') == 'ROL_DESA') {
+
+                $compromisos = DB::select('SELECT c.id, f.descripcion, tf.descripcion, "dias_retrasado" ,c.fecha_inicio,c.responsable, "empleado","cargo", c.fecha_fin, c.descripcion, c.estado FROM tbl_tramites c
+                INNER JOIN tbl_fuentes f on f.id= c.id_fuente
+                INNER JOIN tbl_tipos_fuentes tf on tf.id = c.id_tipo_fuente
+                WHERE c.estado=1');
+            } else {
+                $compromisos = DB::select('SELECT c.id, f.descripcion, tf.descripcion, "dias_retrasado" ,c.fecha_inicio,c.responsable, "empleado","cargo", c.fecha_fin, c.descripcion, c.estado FROM tbl_tramites c
+                INNER JOIN tbl_fuentes f on f.id= c.id_fuente
+                INNER JOIN tbl_tipos_fuentes tf on tf.id = c.id_tipo_fuente
+                WHERE c.estado=1 and c.responsable=?', [Session::get('SESSION_CEDULA')]);
+            }
+
+
 
             $usuarios = DB::connection('mysql_aflow')->select('select * from v_usuario_activo');
             //$cc=[];

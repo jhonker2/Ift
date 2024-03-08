@@ -3,6 +3,7 @@
 <link href="{{ asset('assets/css/procesos.css') }}" rel="stylesheet">
 @endsection
 @section('content')
+
 <div class="page-content">
     <!--breadcrumb-->
     <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
