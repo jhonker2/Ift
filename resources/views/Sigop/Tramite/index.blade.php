@@ -141,9 +141,5 @@
 @endsection
 
 @section('js')
-<script>
-    const abrir_tramite = (id_tramite) => {
-        alert(id_tramite);
-    }
-</script>
+
 @endsection

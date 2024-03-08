@@ -515,7 +515,7 @@ class PlanificacionController extends Controller
                     $date = Carbon::now();
                     $t_archivo =  DB::table("tbl_archivo")->insertGetId([
                         "tipo"     => $type,
-                        "ruta"     => '/Doc_backup/' . $filename,
+                        "ruta"     => $filename,
                         "name"     => $name_origin,
                         "created_at"     => $date,
                         "user_created" => Session::get('SESSION_CEDULA')
@@ -943,5 +943,28 @@ class PlanificacionController extends Controller
                 return response()->json(["respuesta" => false, 'sms' => "Error"]);
             }
         }
+    }
+    public function sp_download_file($id_archivo)
+    {
+        $archivo = DB::table('tbl_archivo')->where('id', $id_archivo)->get();
+        foreach ($archivo as $a) {
+            $de = Storage::disk('documentos')->download($a->ruta);
+            return $de;
+            if ($de == 1) {
+                return response()->json(["respuesta" => true, 'sms' => "ok"]);
+            } else {
+                return response()->json(["respuesta" => false, 'sms' => "Error"]);
+            }
+        }
+    }
+
+    public function GET_archivos(Request $r)
+    {
+
+        $archivos = DB::select('select * from tbl_archivo a
+        INNER JOIN tbl_tramites_archivos ta ON a.id = ta.id_archivo
+        where ta.id_tramite =? and ta.id_tarea =?', [$r->id_tramite, $r->id_tarea]);
+
+        return response()->json(["respuesta" => true, 'archivos' => $archivos, 'id_tarea' => $r->id_tarea, 'id_tramite' => $r->id_tramite]);
     }
 }

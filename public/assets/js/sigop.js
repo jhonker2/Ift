@@ -1,5 +1,7 @@
 let editor;
 let user_session_activa = $("#SESS_USER_ID").val();
+var toast = new Toasty();
+
 const show_modal = (modal) => {
     $("#" + modal).modal('show');
 }
@@ -84,6 +86,8 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
     
                         window.location.href ='/home';
                     }
+                    
+                }else if(p==8){
                     
                 }
                 
@@ -227,10 +231,11 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
                         let lista="";
                     $(res.archivos).each(function(i,data){
                         if(data.id_tarea==id_tarea_){
-                            lista +="<li><a href='#' onclick='descargar_archivo(" + data.id_archivo + ")'>" + data.name + "</a></li>"
+                            lista ="<li class='mt_1-3'><div class='button_files'><div class=' puntero mr-15' onclick='descargar_archivo(" + data.id_archivo + ")'><i class='fa-solid fa-paperclip mr-15'></i><span>" + data.name + "</span></div><div class='puntero' onclick='delete_file("+ data.id_archivo+")'><i class='fa-solid fa-circle-xmark rojo'></i></div></div></li>"
+                           // lista +="<li><a href='#' onclick='descargar_archivo(" + data.id_archivo + ")'>" + data.name + "</a></li>"
+                           $("#lista_file_"+id_tarea_).append(lista)
                         }
                     });
-                    $("#lista_file_"+id_tarea_).append(lista)
                     }else if(id_tarea_==2){
                         $(res.tramite).each(function (i, data) {
                             let f = data.fecha_fin.split(" ");
@@ -280,7 +285,14 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
                     }
                 }else if(p==4){
                     if(res.respuesta){
-
+                        let id_tramite = $("#id_tramite_init").html();
+                        let id_tarea = $("#id_tarea").val();
+                        let token = $("#csrf-token").val();
+                        let datos = {
+                            id_tramite,
+                            id_tarea
+                        };
+                        _AJAX_("/GET_archivos", "POST", token, datos, 8);
                     }
                 }
             },
@@ -344,6 +356,13 @@ const buscar_empleado = async (cedula) =>{
 
 
 const descargar_archivo = (id_archivo) =>{
+    var url = "/sp_download_file/" + id_archivo;
+        console.log(url);
+        var a = document.createElement("a");
+        a.target = "_blank";
+        a.href = url;
+        a.click();
+    //_AJAX_('/sp_download_file/'+id_archivo,'GET','','',4);
 
 }
 

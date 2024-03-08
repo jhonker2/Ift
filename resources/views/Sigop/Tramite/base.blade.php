@@ -36,6 +36,8 @@
 	<script src="https://kit.fontawesome.com/2afebe029b.js" crossorigin="anonymous"></script>
 	<input type="hidden" name="csrf-token" value="{{ csrf_token() }}" id="csrf-token">
 	<title>PORTOAGUAS EP</title>
+	<link href="{{asset('Toastyjs/dist/toasty.min.css')}}" rel="stylesheet">
+	<script src="{{asset('Toastyjs/dist/toasty.min.js')}}"></script>
 
 	<style>
 		/* Estilos personalizados para expandir el modal */
@@ -780,27 +782,23 @@
 	<!-- search modal -->
 
 	</div>
-
-
-
-	@if(session('alerta'))
-	<script>
-		alert("{{ session('alerta') }}");
-	</script>
-	@endif
-
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jsPlumb/2.15.5/js/jsplumb.min.js"></script>
-
 	<!--end switcher-->
 	<!-- Bootstrap JS -->
 	<script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
 	<!--plugins-->
-
 	<script src="{{ asset('assets/js/jquery.min.js') }}"></script>
 	<script src="{{ asset('assets/plugins/simplebar/js/simplebar.min.js') }}"></script>
 	<script src="{{ asset('assets/plugins/fullcalendar/js/main.min.js') }}"></script>
 	<script src="{{ asset('assets/plugins/metismenu/js/metisMenu.min.js') }}"></script>
 	<script src="{{ asset('assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js') }}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	<!-- Bootstrap JS -->
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script src="{{ asset('assets/js/app.js') }}"></script>
+	<script src="{{ asset('assets/js/sigop.js')}}"></script>
 	<script>
 		document.addEventListener("DOMContentLoaded", function () {
 			document.getElementById("searchButton").addEventListener("click", searchTramite);
@@ -826,8 +824,6 @@
 			}
 		}
 
-	</script>
-	<script>
 		document.addEventListener('DOMContentLoaded', function () {
 			const procesoLinks = document.querySelectorAll('.proceso-link');
 
@@ -857,40 +853,7 @@
 					.catch(error => console.error('Error:', error));
 			}
 		});
-	</script>
 
-	<script>
-		document.addEventListener('DOMContentLoaded', function () {
-			var calendarEl = document.getElementById('calendar');
-			var calendar = new FullCalendar.Calendar(calendarEl, {
-				headerToolbar: {
-					left: 'prev,next today',
-					center: 'title',
-					right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
-				},
-				initialView: 'dayGridMonth',
-				initialDate: '2023-09-12',
-				navLinks: true, // can click day/week names to navigate views
-				selectable: true,
-				nowIndicator: true,
-				dayMaxEvents: true, // allow "more" link when too many events
-				editable: true,
-				selectable: true,
-				businessHours: true,
-				dayMaxEvents: true, // allow "more" link when too many events
-				events: [{
-					title: 'Compromiso',
-					start: '2023-09-01',
-				}, {
-					title: 'Click for Google',
-					url: 'http://google.com/',
-					start: '2020-09-28'
-				}]
-			});
-			calendar.render();
-		});
-	</script>
-	<script>
 		// Esta función se llamará cuando se haga clic en el div wf-item para el proceso
 		function openFilesModal() {
 			// Cierra el modal de flujo de trabajo si está abierto
@@ -903,16 +866,7 @@
 		}
 	</script>
 
-	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-	<script src="{{ asset('assets/js/app.js') }}"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-	<script src="{{ asset('assets/plugins/highcharts/js/highcharts.js') }}"></script>
-	<script src="{{ asset('assets/plugins/apexcharts-bundle/js/apexcharts.min.js') }}"></script>
-	<script src="{{ asset('assets/js/index2.js') }}"></script>
-	<!-- Bootstrap JS -->
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-	<script src="{{ asset('assets/js/sigop.js')}}"></script>
+
 	@yield('js')
 	<!--plugins-->
 	<script>

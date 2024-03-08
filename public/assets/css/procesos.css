@@ -1,0 +1,74 @@
+.cabe_control {
+    width: 100%;
+    position: fixed;
+    background: #ddd;
+    padding: 1.2em;
+}
+
+.ck-content {
+    height: 15em !important;
+}
+
+.file-upload {
+    background: #349aeb;
+    padding: 8px;
+    border-radius: 10px;
+    color: #fff;
+    width: 13em;
+    overflow: hidden;
+    position: relative;
+}
+
+.file-upload input {
+    position: absolute;
+    height: 400px;
+    width: 400px;
+    left: -200px;
+    top: -200px;
+    background: transparent;
+    opacity: 0;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+    filter: alpha(opacity=0);
+    cursor: pointer;
+
+}
+
+.mt-5 {
+    margin-top: 5em;
+}
+
+.mt-2 {
+    margin-top: 2em;
+}
+
+.ocultar {
+    display: none;
+}
+
+.mostrar {
+    display: show;
+}
+
+.button_files {
+    display: flex;
+    background: #ddd;
+    position: absolute;
+    padding: 7px;
+    border-radius: 10px;
+}
+
+.rojo {
+    color: red;
+}
+
+.puntero {
+    cursor: pointer;
+}
+
+.mr-15 {
+    margin-right: 15px;
+}
+
+.mt_1-3 {
+    margin-top: 1.3em;
+}

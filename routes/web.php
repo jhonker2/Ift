@@ -192,6 +192,7 @@ Route::get('get_tareas_tramites/{id}', [PlanificacionController::class, 'tarea_t
 //Route::get('proceso/{proceso}/{tarea}/{tramite}', [PlanificacionController::class, 'FRM_COMPROMISO']);
 Route::get('proceso/{proceso}/{tarea}/{tramite?}', [PlanificacionController::class, 'proceso']);
 
+Route::post('archivos', [PlanificacionController::class, 'GET_archivos']);
 Route::post('uplodad/file', [PlanificacionController::class, 'upload_file_ftp']);
 Route::post('uplodad/file_registro', [PlanificacionController::class, 'upload_file_ftp_2']);
 
@@ -216,3 +217,4 @@ Route::post('sp_guardar_tarea', [PlanificacionController::class, 'sp_guardar_tar
 
 /*FILE*/
 Route::get('sp_delete_file/{id_archivo}', [PlanificacionController::class, 'sp_delete_file']);
+Route::get('sp_download_file/{id_archivo}', [PlanificacionController::class, 'sp_download_file']);
