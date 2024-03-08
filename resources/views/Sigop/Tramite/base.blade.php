@@ -135,8 +135,10 @@
 						<div class="menu-title">Mis Opciones</div>
 					</a>
 					<ul>
+						@if(session('SESSION_ROL')=="ROL_PL_SIGOP" ||session('SESSION_ROL')=="ROL_DESA" )
 						<li><a href="/proceso/1/1"><i class='bx bx-radio-circle'></i>
 								Nuevos</a></li>
+						@endif
 						<li><a href="/borrador"><i class='bx bx-radio-circle'></i>
 								Borrador</a></li>
 					</ul>
@@ -145,6 +147,8 @@
 
 
 				</li>
+				@if(session('SESSION_ROL')=="ROL_PL_SIGOP" ||session('SESSION_ROL')=="ROL_DESA" )
+
 				<li class="menu-label">PROCESO</li>
 
 				<li>
@@ -152,7 +156,6 @@
 						<div class="parent-icon"><i class='bx bx-book'></i></div>
 						<div class="menu-title">Administrar</div>
 					</a>
-					@if(session('SESSION_ROL')=="ROL_PL_SIGOP" ||session('SESSION_ROL')=="ROL_DESA" )
 					<ul>
 						<li>
 							<a href="/fuentes">
@@ -167,7 +170,7 @@
 							</a>
 						</li>
 					</ul>
-					@endif
+
 				</li>
 				<li>
 					<a class="has-arrow" href="javascript:;">
@@ -179,7 +182,7 @@
 						<li><a href="/proceso/1/1"><i class='bx bx-radio-circle'></i>
 								Compromisos</a></li>
 					</ul>
-				</li>
+				</li>@endif
 			</ul>
 			<!--end navigation-->
 		</div>

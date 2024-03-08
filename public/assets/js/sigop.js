@@ -251,7 +251,7 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
                     let lista="";
                     $(res.archivos).each(function(i,data){
                         if(data.id_tarea==id_tarea_){
-                            lista ="<li><div class='button_files'><div class=' puntero mr-15' onclick='descargar_archivo(" + data.id_archivo + ")'><span>" + data.name + "</span></div><div class='puntero' onclick='delete_file("+ data.id_archivo+")'><i class='fa-solid fa-circle-xmark rojo'></i></div></div></li>"
+                            lista ="<li class='mt_1-3'><div class='button_files'><div class=' puntero mr-15' onclick='descargar_archivo(" + data.id_archivo + ")'><i class='fa-solid fa-paperclip mr-15'></i><span>" + data.name + "</span></div><div class='puntero' onclick='delete_file("+ data.id_archivo+")'><i class='fa-solid fa-circle-xmark rojo'></i></div></div></li>"
                         }else{
                             lista ="<li><a href='#' onclick='descargar_archivo(" + data.id_archivo + ")'>" + data.name + "</a></li>"
                         }

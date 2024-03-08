@@ -76,23 +76,55 @@ class PlanificacionController extends Controller
     }
     public function index2()
     {
-        $campos = TabcampoP::all();
+        if (Session::get('SESSION_CEDULA')) {
 
-        // Obtener los procesos
-        $procesos = TabProceso::where('estado', 'ACTIVO')->get();
+            $date = Carbon::now();
 
-        // Obtener los datos de la sesión
-        $usuarioSesion = [
-            'user_id' => session('user_id'),
-            'id_rol' => session('id_rol'),
-            'nombre_corto' => session('nombre_corto'),
-            'descripcion' => session('descripcion')
-        ];
-        Session::put('SESSION_PAGE', 'Home');
+            $usuarioSesion = [
+                'user_id' => session('user_id'),
+                'id_rol' => session('id_rol'),
+                'nombre_corto' => session('nombre_corto'),
+                'descripcion' => session('descripcion')
+            ];
+            Session::put('SESSION_PAGE', 'Home');
 
 
-        // Pasar los procesos y los datos de la sesión a la vista
-        return view('Sigop.Tramite.homeU', compact('procesos', 'usuarioSesion', 'campos'));
+            // Pasar los procesos y los datos de la sesión a la vista
+            $botones = [];
+            $compromisos = DB::select('SELECT c.id, f.descripcion, tf.descripcion, "dias_retrasado" ,c.fecha_inicio,c.responsable, "empleado","cargo", c.fecha_fin, c.descripcion, c.estado FROM tbl_tramites c
+            INNER JOIN tbl_fuentes f on f.id= c.id_fuente
+            INNER JOIN tbl_tipos_fuentes tf on tf.id = c.id_tipo_fuente
+            WHERE c.estado=1 and c.responsable=?', [Session::get('SESSION_CEDULA')]);
+
+            $usuarios = DB::connection('mysql_aflow')->select('select * from v_usuario_activo');
+            //$cc=[];
+            foreach ($compromisos as $c) {
+                $fecha1 = new \DateTime($date);
+                $fecha2 = new \DateTime($c->fecha_fin);
+                $diff = $fecha1->diff($fecha2);
+                $v = "";
+                if ($fecha1 > $fecha2) {
+                    if ($diff->days == '0') {
+                    } else {
+                        $v = "Atrasado";
+                    }
+                } else {
+                    $v = "Quedan";
+                }
+                // El resultados sera 3 dias
+                //echo $diff->days . ' dias';
+                foreach ($usuarios as $u) {
+                    if ($c->responsable == $u->cedula) {
+                        $c->empleado = $u->nombre_corto;
+                        $c->cargo = $u->DESCRIPCION;
+                        $c->dias_retrasado = $diff->days . ' ' . $v;
+                    }
+                }
+            }
+            return view('Sigop.Tramite.homeU', compact('usuarioSesion', 'botones', 'compromisos'));
+        } else {
+            return Redirect::to('/login');
+        }
     }
 
     public function showForm($idProceso)
@@ -552,7 +584,7 @@ class PlanificacionController extends Controller
                 $date = Carbon::now();
                 $t_archivo =  DB::table("tbl_archivo")->insertGetId([
                     "tipo"     => $type,
-                    "ruta"     => '/Doc_backup/' . $filename,
+                    "ruta"     =>  $filename,
                     "name"     => $name_origin,
                     "created_at"     => $date,
                     "user_created" => Session::get('SESSION_CEDULA')
@@ -598,7 +630,7 @@ class PlanificacionController extends Controller
             $date = Carbon::now();
             $t_archivo =  DB::table("tbl_archivo")->insertGetId([
                 "tipo"     => $type,
-                "ruta"     => '/Doc_backup/' . $filename,
+                "ruta"     =>  $filename,
                 "name"     => $name_origin,
                 "created_at"     => $date,
                 "user_created" => Session::get('SESSION_CEDULA')

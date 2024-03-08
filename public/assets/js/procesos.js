@@ -65,11 +65,15 @@ const load_file_server_tarea2 = (file_name) => {
             $("#barra_de_progreso").val(0);
             if (respuesta.registro) {
                 //  mostrarRespuesta('El archivo ha sido subido correctamente.', true);
-                alert("El archivo ha sido subido correctamente.");
                 $("#id_tramite_init").html(respuesta.id_tramite);
-                $("#lista_file_2").append("<li><a href='#' onclick='alert(" + respuesta.id_archivo + ")'>" +
-                    respuesta.name_archivo +
-                    "</a> <a href='#'> <i class='fa-solid fa-trash-can'></i></a></li>")
+                let lista =
+                "<li class='mt_1-3'><div class='button_files'><div class=' puntero mr-15' onclick='descargar_archivo(" +
+                respuesta.id_archivo + ")'><i class='fa-solid fa-paperclip mr-15'></i><span>" +
+                respuesta.name_archivo + "</span></div><div class='puntero' onclick='delete_file(" +
+                respuesta.id_archivo +
+                ")'><i class='fa-solid fa-circle-xmark rojo'></i></div></div></li>"
+
+                $("#lista_file_2").append(lista)
             } else {
                 alert(
                     "El archivo NO se ha podido subir. si el archivo pesa mas de 1 GB recarge su navegador ");
