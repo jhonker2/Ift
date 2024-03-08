@@ -143,8 +143,7 @@ Route::middleware(['blocke'])->group(function () {
 /***********/
 /**SIGOP***/
 
-Route::get('/', [PlanificacionController::class, 'login']);
-Route::get('/login', [PlanificacionController::class, 'login']);
+Route::get('login', [PlanificacionController::class, 'login']);
 Route::post('/loginingresar2', [SoapController::class, 'autenticacionWeb'])->name('autenticacionWeb');
 Route::get('logout', [PlanificacionController::class, 'logout']);
 
