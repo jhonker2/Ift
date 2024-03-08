@@ -10,29 +10,20 @@
 <div class="page-content">
     <hr />
     <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4">
+
         <div class="col">
             <div class="card radius-10">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div>
-                            <p class="mb-0">Compromisos Completados</p>
-                            <h5 class="mb-0">{{$completados}}</h5>
+                            <p class="mb-0 text-secondary">Compromisos Completados</p>
+                            <h4 class="my-1">{{$completados}}</h4>
+                            <!--<p class="mb-0 font-13 text-danger"><i class="bx bxs-down-arrow align-middle"></i>$34 from
+                                last week</p>-->
+                        </div>
+                        <div class="widgets-icons bg-light-success text-success ms-auto"><i class="bx bx-file"></i>
                         </div>
                     </div>
-                    <div class="" id="chart2"></div>
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="card radius-10">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div>
-                            <p class="mb-0">Compromisos vencidos</p>
-                            <h5 class="mb-0">0</h5>
-                        </div>
-                    </div>
-                    <div class="" id="chart3"></div>
                 </div>
             </div>
         </div>
@@ -42,11 +33,32 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div>
-                            <p class="mb-0">Compromisos en Ejecucion</p>
-                            <h5 class="mb-0">{{$ejecucion}}</h5>
+                            <p class="mb-0 text-secondary">Compromisos vencidos</p>
+                            <h4 class="my-1">3</h4>
+                            <!--<p class="mb-0 font-13 text-danger"><i class="bx bxs-down-arrow align-middle"></i>$34 from
+                                last week</p>-->
+                        </div>
+                        <div class="widgets-icons bg-light-danger text-danger ms-auto"><i class="bx bx-x-circle"></i>
                         </div>
                     </div>
-                    <div class="" id="chart5"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card radius-10">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <p class="mb-0 text-secondary">Compromisos en Ejecucion</p>
+                            <h4 class="my-1">{{$ejecucion}}</h4>
+                            <!--<p class="mb-0 font-13 text-danger"><i class="bx bxs-down-arrow align-middle"></i>$34 from
+                                last week</p>-->
+                        </div>
+                        <div class="widgets-icons bg-light-warning text-warning ms-auto"><i
+                                class="bx bxs-binoculars"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
