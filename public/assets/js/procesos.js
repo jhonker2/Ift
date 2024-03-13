@@ -45,6 +45,35 @@ $(document).ready(function () {
         } else if (id_tarea_i == 4) {
             _AJAX_("/open/" + id_tramite_i + "/tramite", "GET", "", "", 3);
         }
+    }else{
+        document.getElementById('nombreInput').addEventListener('input', function () {
+            var selectedOption = document.querySelector(
+                `#resultList option[value="${this.value}"]`);
+            var responsableId = selectedOption ? selectedOption.getAttribute('data-id') : '';
+            document.getElementById('responsableId').value = responsableId;
+        });
+
+        document.getElementById('nombreInput').addEventListener('keyup', function () {
+            var query = this.value;
+            if (query.length >= 2) {
+                $.ajax({
+                    url: `/get_empleados?nombres=${query}`,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        var resultList = document.getElementById('resultList');
+                        resultList.innerHTML = ''; // Limpiar resultados anteriores
+                        data.forEach(item => {
+                            resultList.innerHTML +=
+                                `<option data-id="${item.IDENTIFICACION}" value="${item.NOMBRES} (${item.CARGO})"></option>`;
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+            }
+        });
     }
 })
 
