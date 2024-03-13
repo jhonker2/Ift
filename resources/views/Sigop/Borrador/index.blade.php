@@ -5,8 +5,8 @@
         <div class="ps-3">
         </div>
         <div class="ms-auto mr-4">
-            <button type="button" onclick="show_modal('modal_r_tfuente')" class="btn btn-primary px-5"><i
-                    class="bx bx-plus mr-1"></i>Agregar</button>
+            <!--<button type="button" onclick="show_modal('modal_r_tfuente')" class="btn btn-primary px-5"><i
+                    class="bx bx-plus mr-1"></i>Agregar</button>-->
         </div>
     </div>
 </div>
