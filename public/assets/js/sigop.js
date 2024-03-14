@@ -105,6 +105,20 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
                         _AJAX_("/get_fuentes", "GET", "", "", 0);
                         //hide_modal('modal_e_fuente');
                     }
+                }else if(p==11){
+                    //editar tipo fuente
+                    if(res.respuesta){
+                        _AJAX_("/get_tipos_fuentes", "GET", "", "", 1);
+
+                        hide_modal('modal_e_tfuente');
+                    }
+                }else if(p==12){
+                    //eliminar tipo fuente
+                    if(res.res){
+                        _AJAX_("/get_tipos_fuentes", "GET", "", "", 1);
+
+                        //hide_modal('modal_e_fuente');
+                    }
                 }
                 
             },
@@ -154,7 +168,7 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
                                 data.id +
                                 "," +
                                 fuente +
-                                ')"><i class="bx bx-edit me-0"></i></button><button type="button" class="btn btn-outline-danger" onclick="modal_delete(' +
+                                ')"><i class="bx bx-edit me-0"></i></button><button type="button" class="btn btn-outline-danger" onclick="delete_fuente(' +
                                 data.id +
                                 ')"><i class="bx bx-trash-alt me-0"></i></button>'
                             ht += "</td></tr>";
@@ -171,6 +185,8 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
                         let ht = "";
                         ht +='<table id="tbl_fuentes" class="table table-striped table-bordered dataTable" style="width: 100%" role="grid" aria-describedby="example_info"><thead><tr role="row"><th>N</th><th>TIPO DE FUENTE</th><th>FECHA REGISTRO</th><th>USUARIO REGISTRO</th><th>ESTADO</th><th>OPCIONES</th></tr></thead><tbody>';
                         $(res.data).each(function (i, data) {
+                        let tipo_fuente = "'"+data.descripcion+"'";
+
                             ht += "<tr>";
                             ht +='<td>' +data.id +"</td>";
                             ht +='<td >' +data.descripcion +"</td>";
@@ -185,8 +201,7 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
                             ht +=
                                 '<button type="button" class="btn btn-outline-primary" onclick="modal_editar(' +
                                 data.id +
-                                "," +
-                                data.descripcion +
+                                "," +tipo_fuente +
                                 ')"><i class="bx bx-edit me-0"></i></button><button type="button" class="btn btn-outline-danger" onclick="modal_delete(' +
                                 data.id +
                                 ')"><i class="bx bx-trash-alt me-0"></i></button>'

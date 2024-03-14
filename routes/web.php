@@ -183,6 +183,8 @@ Route::get('get_fuentes', [PlanificacionController::class, 'get_fuentes']);
 /**TIPOS FUENTES*/
 Route::get('tipos_fuentes', [PlanificacionController::class, 'tipos_fuentes']);
 Route::post('store/tipofuentes', [PlanificacionController::class, 'store_tipo_fuente']);
+Route::post('/update/Tipofuente', [PlanificacionController::class, 'update_tipo_fuente']);
+Route::post('/delete/Tipofuente', [PlanificacionController::class, 'delete_tipo_fuente']);
 Route::get('get_tipos_fuentes', [PlanificacionController::class, 'get_tipos_fuentes']);
 
 

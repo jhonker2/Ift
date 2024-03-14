@@ -42,7 +42,7 @@
                                                 onclick="modal_editar({{ $f->id }},'{{ $f->descripcion }}')"><i
                                                     class="bx bx-edit me-0"></i></button>
                                             <button type="button" class="btn btn-outline-danger"
-                                                onclick="modal_delete({{ $f->id }})"><i
+                                                onclick="delete_fuente({{ $f->id }})"><i
                                                     class="bx bx-trash-alt me-0"></i>
                                             </button>
                                         </td>
@@ -98,8 +98,53 @@
 
     const modal_editar = (id, fuente) => {
         show_modal("modal_e_tfuente");
-        $("#ip_eidfuente").val(id);
-        $("#ip_efuente").val(fuente);
+        $("#ip_eidtfuente").val(id);
+        $("#ip_etfuente").val(fuente);
     }
+
+    const update_tfuente = () => {
+        let fuente = $("#ip_etfuente").val();
+        let id_fuente = $("#ip_eidtfuente").val();
+
+        if (fuente == "") {
+            alert("El campo fuente se encuentra vacio!")
+        } else {
+            var token = $("#csrf-token").val();
+            let datos = {
+                fuente,
+                id_fuente
+            };
+            _AJAX_("/update/Tipofuente", "POST", token, datos, 11);
+        }
+
+    }
+
+    const delete_fuente = (id_fuente) => {
+
+        Swal.fire({
+            title: "Esta seguro de eliminar el Tipo fuente?",
+            showDenyButton: true,
+            showCancelButton: false,
+            confirmButtonText: "Eliminar",
+            denyButtonText: `Cancelar`
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+
+                if (id_fuente == "") {
+                    alert("El campo Tipo fuente se encuentra vacio!")
+                } else {
+                    var token = $("#csrf-token").val();
+                    let datos = {
+                        id_fuente
+                    };
+                    _AJAX_("/delete/Tipofuente", "POST", token, datos, 12);
+                }
+            }
+        });
+
+
+    }
+
 </script>
 @endsection

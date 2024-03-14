@@ -473,6 +473,26 @@ class PlanificacionController extends Controller
             return response()->json(["respuesta" => false]);
         }
     }
+    public function update_tipo_fuente(Request $r)
+    {
+        $fuente = DB::table('tbl_tipos_fuentes')->where('id', $r->id_fuente)
+            ->update([
+                'descripcion' => $r->fuente,
+            ]);
+
+        if ($fuente >= 1) {
+            return response()->json(["respuesta" => true]);
+        }
+    }
+    public function delete_tipo_fuente(Request $r)
+    {
+        $dele = DB::update('update tbl_tipos_fuentes set estado=0 where id=?', [$r->id_fuente]);
+        if ($dele > 0) {
+            return response()->json(["res" => true]);
+        } else {
+            return response()->json(["res" => false, "sms" => "9998"]);
+        }
+    }
 
     public function guardar_tramite($id_tarea, $id_proceso, $fuente, $tipo, $responsable, $fecha_fin, $descripcion)
     {

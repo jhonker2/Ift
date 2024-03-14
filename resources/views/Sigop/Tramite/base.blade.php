@@ -508,15 +508,15 @@
 				<div class="modal-dialog">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h5 class="modal-title">Editar Fuente de ingreso</h5>
+							<h5 class="modal-title">Editar Tipo de Fuente </h5>
 							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 						</div>
 						<div class="modal-body">
 							<div class="col-md-12">
 								<label for="input15" class="form-label">Tipos de Fuente</label>
 								<div class="position-relative input-icon">
-									<input type="hidden" id="ip_eidfuente">
-									<input type="text" class="form-control" id="ip_efuente" placeholder="Fuente">
+									<input type="hidden" id="ip_eidtfuente">
+									<input type="text" class="form-control" id="ip_etfuente" placeholder="Fuente">
 									<span class="position-absolute top-50 translate-middle-y"><i
 											class="bx bx-world"></i></span>
 								</div>
@@ -524,8 +524,8 @@
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-							<button type="button" class="btn btn-primary" id="btn_s_fuente"
-								onclick="save_fuente()">Guardar</button>
+							<button type="button" class="btn btn-primary" id="btn_e_tfuente"
+								onclick="update_tfuente()">Editar</button>
 						</div>
 					</div>
 				</div>
