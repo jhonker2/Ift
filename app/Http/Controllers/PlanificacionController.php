@@ -400,6 +400,18 @@ class PlanificacionController extends Controller
         return response()->json(["respuesta" => true]);
     }
 
+    public function update_fuente(Request $r)
+    {
+        $fuente = DB::table('tbl_fuentes')->where('id', $r->id_fuente)
+            ->update([
+                'descripcion' => $r->fuente,
+            ]);
+
+        if ($fuente >= 1) {
+            return response()->json(["respuesta" => true]);
+        }
+    }
+
     public function get_fuentes()
     {
         $fuentes = DB::table('tbl_fuentes')->where('estado', 1)->get();
@@ -419,7 +431,7 @@ class PlanificacionController extends Controller
 
     public function delete_fuente(Request $r)
     {
-        $dele = DB::update('update tbl_fuentes set estado=0 where id=?', [$r->idfuente]);
+        $dele = DB::update('update tbl_fuentes set estado=0 where id=?', [$r->id_fuente]);
         if ($dele > 0) {
             return response()->json(["res" => true]);
         } else {

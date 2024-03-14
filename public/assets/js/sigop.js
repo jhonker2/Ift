@@ -6,6 +6,10 @@ const show_modal = (modal) => {
     $("#" + modal).modal('show');
 }
 
+const hide_modal = (modal) => {
+    $("#" + modal).modal('hide');
+}
+
 const abrir_tramite = (id) =>{
     _AJAX_('get_tareas_tramites/'+id,'GET','','',2);
 }
@@ -89,6 +93,18 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
                     
                 }else if(p==8){
                     
+                }else if(p==9){
+                    //editar fuente
+                    if(res.respuesta){
+                        _AJAX_("/get_fuentes", "GET", "", "", 0);
+                        hide_modal('modal_e_fuente');
+                    }
+                }else if(p==10){
+                    //editar fuente
+                    if(res.res){
+                        _AJAX_("/get_fuentes", "GET", "", "", 0);
+                        //hide_modal('modal_e_fuente');
+                    }
                 }
                 
             },
@@ -121,6 +137,7 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
                         let ht = "";
                         ht +='<table id="tbl_fuentes" class="table table-striped table-bordered dataTable" style="width: 100%" role="grid" aria-describedby="example_info"><thead><tr role="row"><th>N</th><th>FUENTE</th><th>FECHA REGISTRO</th><th>USUARIO REGISTRO</th><th>ESTADO</th><th>OPCIONES</th></tr></thead><tbody>';
                         $(res.data).each(function (i, data) {
+                            let fuente= "'"+data.descripcion+"'";
                             ht += "<tr>";
                             ht +='<td>' +data.id +"</td>";
                             ht +='<td >' +data.descripcion +"</td>";
@@ -136,7 +153,7 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
                                 '<button type="button" class="btn btn-outline-primary" onclick="modal_editar(' +
                                 data.id +
                                 "," +
-                                data.descripcion +
+                                fuente +
                                 ')"><i class="bx bx-edit me-0"></i></button><button type="button" class="btn btn-outline-danger" onclick="modal_delete(' +
                                 data.id +
                                 ')"><i class="bx bx-trash-alt me-0"></i></button>'

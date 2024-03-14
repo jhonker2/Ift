@@ -45,7 +45,7 @@
                     <td><button type="button" class="btn btn-outline-primary"
                         onclick="modal_editar({{$f->id}},'{{$f->descripcion}}')"><i
                           class="bx bx-edit me-0"></i></button>
-                      <button type="button" class="btn btn-outline-danger" onclick="modal_delete({{$f->id}})"><i
+                      <button type="button" class="btn btn-outline-danger" onclick="delete_fuente({{$f->id}})"><i
                           class="bx bx-trash-alt me-0"></i>
                       </button>
                     </td>
@@ -103,6 +103,50 @@
     show_modal("modal_e_fuente");
     $("#ip_eidfuente").val(id);
     $("#ip_efuente").val(fuente);
+  }
+
+  const update_fuente = () => {
+    let fuente = $("#ip_efuente").val();
+    let id_fuente = $("#ip_eidfuente").val();
+
+    if (fuente == "") {
+      alert("El campo fuente se encuentra vacio!")
+    } else {
+      var token = $("#csrf-token").val();
+      let datos = {
+        fuente,
+        id_fuente
+      };
+      _AJAX_("/update/fuente", "POST", token, datos, 9);
+    }
+
+  }
+
+  const delete_fuente = (id_fuente) => {
+
+    Swal.fire({
+      title: "Esta seguro de eliminar la fuente?",
+      showDenyButton: true,
+      showCancelButton: false,
+      confirmButtonText: "Eliminar",
+      denyButtonText: `Cancelar`
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+
+        if (id_fuente == "") {
+          alert("El campo fuente se encuentra vacio!")
+        } else {
+          var token = $("#csrf-token").val();
+          let datos = {
+            id_fuente
+          };
+          _AJAX_("/delete/fuente", "POST", token, datos, 10);
+        }
+      }
+    });
+
+
   }
 
 

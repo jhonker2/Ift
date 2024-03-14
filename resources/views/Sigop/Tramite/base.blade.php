@@ -468,8 +468,8 @@
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-							<button type="button" class="btn btn-primary" id="btn_s_fuente"
-								onclick="save_fuente()">Guardar</button>
+							<button type="button" class="btn btn-primary" id="btn_e_fuente"
+								onclick="update_fuente()">Editar</button>
 						</div>
 					</div>
 				</div>

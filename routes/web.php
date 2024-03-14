@@ -175,6 +175,8 @@ Route::get('base', [PlanificacionController::class, 'base'])->name('base');
 /*FUENTES*/
 Route::get('fuentes', [PlanificacionController::class, 'fuentes']);
 Route::post('/store/fuente', [PlanificacionController::class, 'store_fuente']);
+Route::post('/update/fuente', [PlanificacionController::class, 'update_fuente']);
+Route::post('/delete/fuente', [PlanificacionController::class, 'delete_fuente']);
 Route::get('get_fuentes', [PlanificacionController::class, 'get_fuentes']);
 
 
