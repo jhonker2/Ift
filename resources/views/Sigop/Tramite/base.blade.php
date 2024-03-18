@@ -141,6 +141,8 @@
 						@endif
 						<li><a href="/borrador"><i class='bx bx-radio-circle'></i>
 								Borrador</a></li>
+						<!--<li><a href="/borrador"><i class='bx bx-radio-circle'></i>
+								Finalizados</a></li>-->
 					</ul>
 				</li>
 				<li>
