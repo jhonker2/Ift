@@ -196,9 +196,22 @@ class PlanificacionController extends Controller
             $tareas = DB::table('tbl_tareas')->where('id', $tarea)->get();
             $tramite_data = DB::table('tbl_tramites')->where('id', $tramite)->get();
             Session::put('SESSION_PAGE', 'COMPROMISOS');
-            $botones = DB::select('select c.id, c.id_proceso, c.id_tarea, c.tipo, c.etiqueta, c.icono, f.descripcion, f.query from tbl_campos c
-            LEFT JOIN tbl_funciones f ON f.id_campo = c.id
-            where c.id_proceso =? and c.id_tarea=?', [$proceso, $tarea]);
+
+            $tramite_tarea = DB::select("select * from tbl_tareas_tramites where id =  (select max(id) from tbl_tareas_tramites where id_tramite = ? and id_tarea = ? and estado = 'P')", [$tramite, $tarea]);
+            //return $tramite_tarea;
+            if ($tramite_tarea == []) {
+                $botones = DB::select('select c.id, c.id_proceso, c.id_tarea, c.tipo, c.etiqueta, c.icono, f.descripcion, f.query from tbl_campos c
+                LEFT JOIN tbl_funciones f ON f.id_campo = c.id
+                where c.id_proceso =? and c.id_tarea=?', [$proceso, $tarea]);
+            } else {
+                foreach ($tramite_tarea as $t) {
+                    if ($t->estado == 'P') {
+                        $botones = [];
+                    }
+                }
+            }
+
+
             //$botones = DB::table('tbl_campos')->where('id_proceso', $proceso)->where('id_tarea', $tarea)->get();
 
             $init = DB::select('select * from tbl_funciones where id_proceso = ? and id_tarea = ? and ISNULL(id_campo)', [$proceso, $tarea]);

@@ -43,6 +43,7 @@ $(document).ready(function () {
         } else if (id_tarea_i == 2) {
             _AJAX_("/open/" + id_tramite_i + "/" + id_tarea_i + "/tramite", "GET", "", "", 3);
         } else if (id_tarea_i == 4) {
+            debugger
             _AJAX_("/open/" + id_tramite_i + "/tramite", "GET", "", "", 3);
         }
     }else{

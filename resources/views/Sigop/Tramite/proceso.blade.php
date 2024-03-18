@@ -161,12 +161,21 @@
             </ul>
         </div>
         <hr>
-        <div class="form-check form-switch">
-            <!--<input class="form-check-input" type="checkbox" id="chk_estado">-->
-            <input class="form-check-input" type="checkbox" role="switch" id="chk_estado">
-            <label class="form-check-label" for="chk_estado">Se aprueba los documentos</label>
+        <div id="grupo_observacion">
+            <div class="form-check form-switch">
+                <!--<input class="form-check-input" type="checkbox" id="chk_estado">-->
+                <input class="form-check-input" type="checkbox" role="switch" id="chk_estado">
+                <label class="form-check-label" for="chk_estado">Se aprueba los documentos</label>
+            </div>
+            <textarea class="form-control" id="txt_observacion" placeholder="Observacion..." rows="3"></textarea>
         </div>
-        <textarea class="form-control" id="txt_observacion" placeholder="Observacion..." rows="3"></textarea>
+
+        <div>
+            <div id="cont_chk">
+
+            </div>
+            <p id="txt_observacion_4"></p>
+        </div>
 
     </div>
     @endif

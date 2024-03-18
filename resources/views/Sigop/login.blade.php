@@ -143,7 +143,6 @@
               title: "Ingreso Correcto!",
               text: response.message,
             }).then(function () {
-              debugger;
               window.location.href = response.redirectUrl; // Redirigir basado en la URL enviada por Laravel
             });
           },

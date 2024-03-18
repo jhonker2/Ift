@@ -229,7 +229,9 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
                         if(data.estado=='A'){
                             html+='<td>REASIGNADO</td>'
                         }else if(data.estado=='P'){
-                            html+='<td>PROCESADO</td>'
+                            //html+='<td>PROCESADO</td>'
+                            html+='<td> <a href="/proceso/'+data.id_proceso+'/'+data.id_tarea+'/'+data.id_tramite+'">PROCESADO</a></td>'
+
                         }else if(data.estado=='E'){
                             if(data.id_usuario==user_session_activa){
                                 html+='<td> <a href="/proceso/'+data.id_proceso+'/'+data.id_tarea+'/'+data.id_tramite+'">EJECUCIÓN</a></td>'
@@ -305,12 +307,22 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
                            let  lista ="<li><a href='#' onclick='descargar_archivo(" + data.id_archivo + ")'>" + data.name + "</a></li>"
                             $("#lista_file_"+data.id_tarea).append(lista)
                         });
-
+                        let obs="";
                         $(res.tarea_tramite).each(function(i,data){
                             if(data.id_tarea==2 && data.estado=='P'){
                                 $("#observacion2").html(data.observacion)   
+                            }else if(data.id_tarea==4 && data.estado=='P'){
+                                obs += data.observacion;
+                                $("#grupo_observacion").hide();
+                                if(data.estado_confirmacion=='true'){
+                                    $("#cont_chk").html("<i class='verde fa-solid fa-circle-check'></i> El documento se aprobó por el autorizador");
+                                }else{
+                                    $("#cont_chk").html("No hay datos que mostrar");
+                                }
                             }
                          });
+                         $("#txt_observacion_4").html(obs)   
+
                     }
                     
 
