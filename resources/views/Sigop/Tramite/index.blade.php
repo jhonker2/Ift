@@ -13,7 +13,7 @@
     <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4">
 
         <div class="col">
-            <div class="card radius-10">
+            <div class="card seleccion radius-10" onclick="mostrar_tramites(1)">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div>
@@ -30,12 +30,14 @@
         </div>
 
         <div class="col">
-            <div class="card radius-10">
+            <div class="card seleccion radius-10" onclick="mostrar_tramites(3)">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div>
                             <p class="mb-0 text-secondary">Compromisos vencidos</p>
-                            <h4 class="my-1">3</h4>
+                            @foreach($vencidos as $v)
+                            <h4 class="my-1">{{$v->total}}</h4>
+                            @endforeach
                             <!--<p class="mb-0 font-13 text-danger"><i class="bx bxs-down-arrow align-middle"></i>$34 from
                                 last week</p>-->
                         </div>
@@ -47,7 +49,7 @@
         </div>
 
         <div class="col">
-            <div class="card radius-10">
+            <div class="card seleccion radius-10" onclick="mostrar_tramites(2)">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div>
@@ -56,8 +58,7 @@
                             <!--<p class="mb-0 font-13 text-danger"><i class="bx bxs-down-arrow align-middle"></i>$34 from
                                 last week</p>-->
                         </div>
-                        <div class="widgets-icons bg-light-warning text-warning ms-auto"><i
-                                class="bx bxs-binoculars"></i>
+                        <div class="widgets-icons bg-light-warning text-warning ms-auto"><i class="bx bxs-binoculars"></i>
                         </div>
                     </div>
                 </div>
@@ -79,14 +80,13 @@
                             <th>Estado</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="body_compromisos">
                         @foreach($compromisos as $c)
                         <tr class="seleccion" onclick="abrir_tramite({{$c->id}})">
                             <td>
                                 <div class="d-flex align-items-center">
                                     <div class="">
-                                        <img src="img/person.png" class="rounded-circle" width="40" height="40"
-                                            alt="" />
+                                        <img src="img/person.png" class="rounded-circle" width="40" height="40" alt="" />
                                     </div>
                                     <div class="ms-2">
                                         <h6 class="mb-0 font-14">
@@ -168,14 +168,13 @@
                             <th>Estado</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="body_compromisos">
                         @foreach ($compromisos as $c)
                         <tr class="seleccion" onclick="abrir_tramite({{ $c->id }})">
                             <td>
                                 <div class="d-flex align-items-center">
                                     <div class="">
-                                        <img src="img/person.png" class="rounded-circle" width="40" height="40"
-                                            alt="" />
+                                        <img src="img/person.png" class="rounded-circle" width="40" height="40" alt="" />
                                     </div>
                                     <div class="ms-2">
                                         <h6 class="mb-0 font-14">
@@ -244,5 +243,18 @@
 @endsection
 
 @section('js')
+<script>
+    const mostrar_tramites = (tipo) => {
+        if (tipo == 1) { // completados
+            _AJAX_("/GET_compromisos/" + tipo, "GET", "", "", 5);
 
+        } else if (tipo == 2) { // vencidos
+            _AJAX_("/GET_compromisos/" + tipo, "GET", "", "", 5);
+
+        } else if (tipo == 3) { // ejecucion
+            _AJAX_("/GET_compromisos/" + tipo, "GET", "", "", 5);
+
+        }
+    }
+</script>
 @endsection

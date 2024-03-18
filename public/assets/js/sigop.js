@@ -326,6 +326,44 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
                         };
                         _AJAX_("/GET_archivos", "POST", token, datos, 8);
                     }
+                }else if(p==5){
+                    let html='';
+                    $(res).each(function (i, data) {
+                        html +='<tr class="seleccion" onclick="abrir_tramite('+data.id+')">'
+                        html +='<td><div class="d-flex align-items-center"><div class=""><img src="img/person.png" class="rounded-circle" width="40" height="40" alt="" /></div><div class="ms-2"><h6 class="mb-0 font-14">'+data.empleado+'</h6><p class="mb-0 font-13 text-secondary">'+data.cargo+'</p> </div></div></td>'
+                        html +='<td>'+data.descripcion+'</td>'
+                        html +='<td>'+data.fecha_inicio+'</td>'
+                        html +='<td>'+data.fecha_fin +'</td>'
+                        if (data.estado == 1){
+                            if (data.dias_retrasado == 0){
+                        html +='<td><div class="badge rounded-pill bg-danger w-100">Hoy se vence el compromiso</div></td>'
+                            }else{
+                                //$dias = explode(' ', $c->dias_retrasado);
+                                let dias = data.dias_retrasado.split(' ');
+                                html +='<td>'
+                                if(dias[1]=='Atrasado'){
+                                    html += ' <div class="badge rounded-pill bg-danger">'+data.dias_retrasado+'</div>'
+                                }else{
+                                    html +='<div class="badge rounded-pill bg-success">'+data.dias_retrasado+'</div>'
+                                }
+                                html +='</td>'
+                            }
+
+                        }else{
+                            html +='<td></td>';
+                        }
+                        html+='<td>'
+                        if (data.estado == 1){
+                            html += '<div class="badge rounded-pill bg-warning w-100">EJECUCION</div>'
+                        }else if(data.estado == 2){
+                         html +='<div class="badge rounded-pill bg-success w-100">FINALIZADO</div>'
+
+                        }
+                        html +='</td>'
+                    
+                html +='</tr>'
+                    });
+                $("#body_compromisos").html(html);
                 }
             },
         }).fail(function (jqXHR, textStatus, errorthrown) {

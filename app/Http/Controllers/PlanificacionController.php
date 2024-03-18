@@ -34,6 +34,8 @@ class PlanificacionController extends Controller
             Session::put('SESSION_PAGE', 'Home');
             $completados = DB::select('select count(*) as total from tbl_tramites  where estado=2');
             $ejecucion = DB::select('select count(*) as total from tbl_tramites  where estado=1');
+            $vencidos = DB::select('SELECT COUNT(id)  as total from tbl_tramites WHERE ESTADO=1 and fecha_fin < now()');
+
             if (Session::get('SESSION_ROL') == 'ROL_PL_SIGOP' || Session::get('SESSION_ROL') == 'ROL_DESA') {
 
                 $compromisos = DB::select('SELECT c.id, f.descripcion, tf.descripcion, "dias_retrasado" ,c.fecha_inicio,c.responsable, "empleado","cargo", c.fecha_fin, c.descripcion, c.estado FROM tbl_tramites c
@@ -78,11 +80,12 @@ class PlanificacionController extends Controller
             $ejecucion = $ejecucion[0]->total;
             //  return $compromisos;
             $botones = [];
-            return view('Sigop.Tramite.index', compact('compromisos', 'completados', 'ejecucion', 'botones'));
+            return view('Sigop.Tramite.index', compact('compromisos', 'completados', 'ejecucion', 'vencidos', 'botones'));
         } else {
             return Redirect::to('/login');
         }
     }
+
     public function index2()
     {
         if (Session::get('SESSION_CEDULA')) {
@@ -1039,5 +1042,56 @@ class PlanificacionController extends Controller
         where ta.id_tramite =? and ta.id_tarea =?', [$r->id_tramite, $r->id_tarea]);
 
         return response()->json(["respuesta" => true, 'archivos' => $archivos, 'id_tarea' => $r->id_tarea, 'id_tramite' => $r->id_tramite]);
+    }
+
+    public function Getcompromisos($tipo)
+    {
+        date_default_timezone_set("America/Guayaquil");
+        //$date = "2024-02-25T12:38:40.435251Z"; //Carbon::now();
+        $date = Carbon::now();
+        $usuarios = DB::connection('mysql_aflow')->select('select * from v_usuario_activo');
+
+        if ($tipo == 2) {
+            $compromisos = DB::select('SELECT c.id, f.descripcion, tf.descripcion, "dias_retrasado" ,c.fecha_inicio,c.responsable, "empleado","cargo", c.fecha_fin, c.descripcion, c.estado FROM tbl_tramites c
+            INNER JOIN tbl_fuentes f on f.id= c.id_fuente
+            INNER JOIN tbl_tipos_fuentes tf on tf.id = c.id_tipo_fuente
+            WHERE c.estado=1');
+        } else if ($tipo == 1) {
+            $compromisos = DB::select('SELECT c.id, f.descripcion, tf.descripcion, "dias_retrasado" ,c.fecha_inicio,c.responsable, "empleado","cargo", c.fecha_fin, c.descripcion, c.estado FROM tbl_tramites c
+            INNER JOIN tbl_fuentes f on f.id= c.id_fuente
+            INNER JOIN tbl_tipos_fuentes tf on tf.id = c.id_tipo_fuente
+            WHERE c.estado=2');
+        } else {
+            $compromisos = DB::select('SELECT c.id, f.descripcion, tf.descripcion, "dias_retrasado" ,c.fecha_inicio,c.responsable, "empleado","cargo", c.fecha_fin, c.descripcion, c.estado FROM tbl_tramites c
+            INNER JOIN tbl_fuentes f on f.id= c.id_fuente
+            INNER JOIN tbl_tipos_fuentes tf on tf.id = c.id_tipo_fuente
+            WHERE c.estado=1 and c.fecha_fin < now()');
+        }
+
+
+        foreach ($compromisos as $c) {
+            $fecha1 = new \DateTime($date);
+            $fecha2 = new \DateTime($c->fecha_fin);
+            $diff = $fecha1->diff($fecha2);
+            $v = "";
+            if ($fecha1 > $fecha2) {
+                if ($diff->days == '0') {
+                } else {
+                    $v = "Atrasado";
+                }
+            } else {
+                $v = "Quedan";
+            }
+            // El resultados sera 3 dias
+            //echo $diff->days . ' dias';
+            foreach ($usuarios as $u) {
+                if ($c->responsable == $u->cedula) {
+                    $c->empleado = $u->nombre_corto;
+                    $c->cargo = $u->DESCRIPCION;
+                    $c->dias_retrasado = $diff->days . ' ' . $v;
+                }
+            }
+        }
+        return $compromisos;
     }
 }

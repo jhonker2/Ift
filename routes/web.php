@@ -149,7 +149,7 @@ Route::get('logout', [PlanificacionController::class, 'logout']);
 
 Route::get('home', [PlanificacionController::class, 'index']);
 Route::get('/index2', [PlanificacionController::class, 'index2'])->name('index2');
-
+Route::get('GET_compromisos/{tipo}', [PlanificacionController::class, 'Getcompromisos']);
 
 Route::get('/mensajeria2', [PlanificacionController::class, 'mensajeria2'])->name('mensajeria2');; // Usa la sintaxis de array para referenciar el método del controlador
 Route::get('/mistramites', [PlanificacionController::class, 'mistramites'])->name('mistramites');; // Usa la sintaxis de array para referenciar el método del controlador
