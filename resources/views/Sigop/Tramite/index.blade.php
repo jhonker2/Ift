@@ -73,7 +73,7 @@
                     <thead class="table-light">
                         <tr>
                             <th>Personal</th>
-                            <th>Tramnite</th>
+                            <th>Tramite</th>
                             <th>Asunto</th>
                             <th>Fecha Creado</th>
                             <th>Fecha Compromiso</th>
