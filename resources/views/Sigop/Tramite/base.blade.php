@@ -129,6 +129,12 @@
 			<!--navigation-->
 			<ul class="metismenu" id="menu">
 				<li>
+					<a href="/home">
+						<div class="parent-icon"><i class='bx bx-home'></i></div>
+						<div class="menu-title">Inicio</div>
+					</a>
+				</li>
+				<li>
 					<a href="javascript:;" class="has-arrow">
 						<div class="parent-icon"><i class='bx bx-plus'></i></div>
 

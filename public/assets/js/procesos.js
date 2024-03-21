@@ -26,7 +26,36 @@ $(document).ready(function () {
                         type: 'GET',
                         dataType: 'json',
                         success: function (data) {
-                            var resultList = document.getElementById('resultList');
+                            let resultList = document.getElementById('resultList');
+                            resultList.innerHTML = ''; // Limpiar resultados anteriores
+                            data.forEach(item => {
+                                resultList.innerHTML +=
+                                    `<option data-id="${item.IDENTIFICACION}" value="${item.NOMBRES} (${item.CARGO})"></option>`;
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error:', error);
+                        }
+                    });
+                }
+            });
+
+            document.getElementById('nombreInputseguimiento').addEventListener('input', function () {
+                var selectedOption = document.querySelector(
+                    `#resultList_seguimiento option[value="${this.value}"]`);
+                var seguiminetoId = selectedOption ? selectedOption.getAttribute('data-id') : '';
+                document.getElementById('seguiminetoId').value = seguiminetoId;
+            });
+    
+            document.getElementById('nombreInputseguimiento').addEventListener('keyup', function () {
+                var query = this.value;
+                if (query.length >= 2) {
+                    $.ajax({
+                        url: `/get_empleados?nombres=${query}`,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function (data) {
+                            let resultList = document.getElementById('resultList_seguimiento');
                             resultList.innerHTML = ''; // Limpiar resultados anteriores
                             data.forEach(item => {
                                 resultList.innerHTML +=
@@ -62,6 +91,36 @@ $(document).ready(function () {
                     dataType: 'json',
                     success: function (data) {
                         var resultList = document.getElementById('resultList');
+                        resultList.innerHTML = ''; // Limpiar resultados anteriores
+                        data.forEach(item => {
+                            resultList.innerHTML +=
+                                `<option data-id="${item.IDENTIFICACION}" value="${item.NOMBRES} (${item.CARGO})"></option>`;
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+            }
+        });
+
+
+        document.getElementById('nombreInputseguimiento').addEventListener('input', function () {
+            var selectedOption = document.querySelector(
+                `#resultList_seguimiento option[value="${this.value}"]`);
+            var seguiminetoId = selectedOption ? selectedOption.getAttribute('data-id') : '';
+            document.getElementById('seguiminetoId').value = seguiminetoId;
+        });
+
+        document.getElementById('nombreInputseguimiento').addEventListener('keyup', function () {
+            var query = this.value;
+            if (query.length >= 2) {
+                $.ajax({
+                    url: `/get_empleados?nombres=${query}`,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        var resultList = document.getElementById('resultList_seguimiento');
                         resultList.innerHTML = ''; // Limpiar resultados anteriores
                         data.forEach(item => {
                             resultList.innerHTML +=
@@ -125,6 +184,8 @@ const load_file_server = (file_name) => {
     let tipo = $("#sel_tipo").val();
     let fecha_fin = $("#ip_fecha").val();
     let responsableId = $("#responsableId").val();
+    let seguiminetoId = $("#seguiminetoId").val();
+    let asunto = $("#ip_asunto").val();
     let descripcion = editor.getData(); //$(".ck-content").html();
 
     $("#file").upload('/uplodad/file', {
@@ -136,7 +197,9 @@ const load_file_server = (file_name) => {
         tipo,
         fecha_fin,
         responsableId,
-        descripcion
+        descripcion,
+        seguiminetoId,
+        asunto
     },
         token,
         function (respuesta) {
@@ -191,6 +254,9 @@ const f_savetramite = () => {
     let tipo = $("#sel_tipo").val();
     let fecha_fin = $("#ip_fecha").val();
     let responsableId = $("#responsableId").val();
+    let seguimientoId = $("#seguiminetoId").val();
+    let asunto = $("#ip_asunto").val();
+
     //let descripcion = $(".ck-content").html();
     let descripcion = editor.getData(); //$(".ck-content").html();
     if (fuente == "") {
@@ -216,7 +282,9 @@ const f_savetramite = () => {
             tipo: tipo,
             fecha_fin: fecha_fin,
             responsableId: responsableId,
-            descripcion: descripcion
+            descripcion: descripcion,
+            seguimientoId,
+            asunto
         };
         _AJAX_("/store/compromisos", "POST", token, datos, 2);
     }

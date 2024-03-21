@@ -73,9 +73,10 @@
                     <thead class="table-light">
                         <tr>
                             <th>Personal</th>
-                            <th>Descripción</th>
-                            <th>Fecha Inicio</th>
-                            <th>Fecha Fin</th>
+                            <th>Tramnite</th>
+                            <th>Asunto</th>
+                            <th>Fecha Creado</th>
+                            <th>Fecha Compromiso</th>
                             <th>Dias retrasado</th>
                             <th>Estado</th>
                         </tr>
@@ -98,7 +99,8 @@
                                     </div>
                                 </div>
                             </td>
-                            <td>@php echo($c->descripcion) @endphp</td>
+                            <td>{{$c->id_tramite}}</td>
+                            <td>{{$c->asunto }}</td>
                             <td>{{$c->fecha_inicio}}</td>
                             <td>{{$c->fecha_fin}}</td>
                             @if($c->estado==1)
@@ -161,9 +163,10 @@
                     <thead class="table-light">
                         <tr>
                             <th>Personal</th>
-                            <th>Descripción</th>
+                            <th>Tramite</th>
+                            <th>Asunto</th>
                             <th>Fecha Inicio</th>
-                            <th>Fecha Fin</th>
+                            <th>Fecha Compromiso</th>
                             <th>Dias retrasado</th>
                             <th>Estado</th>
                         </tr>
@@ -179,6 +182,10 @@
                                     <div class="ms-2">
                                         <h6 class="mb-0 font-14">
                                             {{ $c->empleado }}
+                                            @if ($c->responsable != session('SESSION_CEDULA'))
+                                            <span class="badge bg-secondary">Asignado para dar
+                                                seguimiento</span>
+                                            @endif
                                         </h6>
                                         <p class="mb-0 font-13 text-secondary">
                                             {{ $c->cargo }}
@@ -186,7 +193,8 @@
                                     </div>
                                 </div>
                             </td>
-                            <td>@php echo($c->descripcion) @endphp</td>
+                            <td>{{$c->id_tramite}}</td>
+                            <td>{{$c->asunto }}</td>
                             <td>{{ $c->fecha_inicio }}</td>
                             <td>{{ $c->fecha_fin }}</td>
                             @if ($c->estado == 1)

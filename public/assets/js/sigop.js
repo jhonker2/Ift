@@ -47,10 +47,11 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
                         $("#btn_s_tfuente").removeAttr('disabled');
                         $("#modal_r_tfuente").modal("hide");
                     }
-                } else if (p == 2) {
+                } else if (p == 2) { // GUARDAR TAREA 1
                     if (res.respuesta) {
                         alert(res.sms);
-                        $("#id_tramite_init").html(respuesta.id_tramite);
+                        $("#id_tramite_init").html(res.id_tramite);
+                        $("#code_tramite").html(res.code_tramite);
                     }else{
                         alert("Error al guardar el tramite");
                     }
@@ -255,7 +256,9 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
                             $("#sel_fuente").val(data.id_fuente);
                             $("#sel_tipo").val(data.id_tipo_fuente);
                             $("#responsableId").val(data.responsable);
-                             buscar_empleado(data.responsable);
+                            $("#seguiminetoId").val(data.usuario_seguimiento);
+                             buscar_empleado(data.responsable, 'nombreInput');
+                             buscar_empleado(data.usuario_seguimiento,'nombreInputseguimiento');
                             //$(".ck-content").html(data.descripcion);
                             editor.setData(data.descripcion)
                             $("#ip_fecha").val(f[0]);
@@ -417,7 +420,7 @@ const buscar_empleado_v2 = async (cedula) =>{
     });
 }
 
-const buscar_empleado = async (cedula) =>{
+const buscar_empleado = async (cedula, campo) =>{
     $.ajax({
         url: `/get_empleados?nombres=${cedula}`,
         type: 'GET',
@@ -426,7 +429,7 @@ const buscar_empleado = async (cedula) =>{
             //var resultList = document.getElementById('resultList');
             //resultList.innerHTML = ''; // Limpiar resultados anteriores
             data.forEach(item => {
-                $("#nombreInput").val(`${item.NOMBRES} (${item.CARGO})`)
+                $("#"+campo).val(`${item.NOMBRES} (${item.CARGO})`)
                 //resultList.innerHTML += `<option data-id="${item.IDENTIFICACION}" value="${item.NOMBRES} (${item.CARGO})"></option>`;
             });
         },

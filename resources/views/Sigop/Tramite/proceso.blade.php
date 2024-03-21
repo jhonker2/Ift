@@ -8,19 +8,30 @@
     <!--breadcrumb-->
     <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
         @if (isset($tramite))
-        <div class="breadcrumb-title pe-3 mt-5"><span>#</span><span id="id_tramite_init">{{ $tramite }}</span>
+        <div class="breadcrumb-title pe-3 mt-5"><span>#</span>
+
+            @if(sizeof($tramite_data)!=0)
+            @foreach($tramite_data as $td)
+            <span id="code_tramite">{{$td->id_tramite}}</span>
+            @endforeach
+            @else
+            <span id="code_tramite">0</span>
+            @endif
+            <span class="hide" id="id_tramite_init">{{$tramite }}</span>
         </div>
         @else
-        <div class="breadcrumb-title pe-3 mt-5"><span>#</span><span id="id_tramite_init">0</span>
+        <div class="breadcrumb-title pe-3 mt-5"><span>#</span>
+            <span id="code_tramite">0</span><span id="id_tramite_init">0</span>
         </div>
         @endif
         @foreach ($procesos as $p)
-        <div class="breadcrumb-title pe-3 mt-5"><span id="proceso">Proceso: {{ $p->descripcion }}</span>
+        <div class="breadcrumb-title pe-3 mt-5"><span id="proceso"><strong>Proceso:</strong> {{ $p->descripcion
+                }}</span>
         </div>
         <input type="hidden" id="id_proceso" value="{{ $p->id }}">
         @endforeach
         @foreach ($tareas as $t)
-        <div class="breadcrumb-title pe-3 mt-5"><span id="tarea">Tarea: {{ $t->descripcion }}</span>
+        <div class="breadcrumb-title pe-3 mt-5"><span id="tarea"><strong>Tarea:</strong> {{ $t->descripcion }}</span>
         </div>
         <input type="hidden" id="id_tarea" value="{{ $t->id }}">
         @endforeach
@@ -29,9 +40,8 @@
     @foreach ($tareas as $t)
     @if ($t->id == 1)
     <div id="form_1">
-
         <div class="mb-3">
-            <label for="combo1" class="form-label">Seleccione la fuente</label>
+            <label for="combo1" class="form-label"><strong> Seleccione la fuente:</strong></label>
             <select class="form-select" id="sel_fuente">
                 <option value="0">Seleccione la fuente</option>
                 @foreach ($fuentes as $f)
@@ -41,7 +51,7 @@
         </div>
 
         <div class="mb-3">
-            <label for="combo2" class="form-label">Seleccione el Tipo</label>
+            <label for="combo2" class="form-label"><strong> Seleccione el Tipo:</strong></label>
             <select class="form-select" id="sel_tipo">
                 <option value="0">Seleccione el Tipo</option>
                 @foreach ($tiposTramite as $t)
@@ -50,16 +60,29 @@
             </select>
         </div>
         <div class="mb-3">
-            <label for="nombreInput" class="form-label">Responsable</label>
-            <input type="text" class="form-control" id="nombreInput" placeholder="Escribe para buscar..."
-                list="resultList">
+            <label class="form-label"><strong> Asunto:</strong></label>
+            <input type="text" class="form-control" id="ip_asunto" placeholder="Ingrese un asunto" autocomplete="off">
+
+        </div>
+        <div class="mb-3">
+            <label for="nombreInput" class="form-label"><strong> Responsable:</strong></label>
+            <input type="text" class="form-control" id="nombreInput"
+                placeholder="Ingrese el nombre o cedula del responsable" list="resultList">
             <datalist id="resultList"></datalist>
             <input type="hidden" id="responsableId" name="responsableId">
         </div>
         <div class="mb-3">
-            <label class="form-label">Seleccione la Fecha del compromiso</label>
+            <label class="form-label"><strong>Seleccione la Fecha del compromiso:</strong></label>
             <input type="date" id="ip_fecha" class="form-control date-time" />
         </div>
+        <div class="mb-3">
+            <label for="nombreInputseguimiento" class="form-label"><strong>Usuario para seguimiento:</strong></label>
+            <input type="text" class="form-control" id="nombreInputseguimiento"
+                placeholder="Ingrese el nombre o cédula del usuario para seguimiento..." list="resultList_seguimiento">
+            <datalist id="resultList_seguimiento"></datalist>
+            <input type="hidden" id="seguiminetoId" name="seguiminetoId">
+        </div>
+
         <h6 class="mb-0 text-uppercase">Archivos:</h6>
         <input type="hidden" id="ids_archivos">
 
@@ -73,7 +96,7 @@
             </ul>
         </div>
         <div class="mb-3">
-            <label for="inputSolicitante" class="form-label">Descripción</label>
+            <label for="inputSolicitante" class="form-label"><strong>Descripción</strong></label>
             <textarea name="content" id="editor"></textarea>
         </div>
     </div>

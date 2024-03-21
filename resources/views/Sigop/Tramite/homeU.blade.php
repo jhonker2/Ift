@@ -9,9 +9,10 @@
                         <thead class="table-light">
                             <tr>
                                 <th>Personal</th>
+                                <th>Tramite</th>
                                 <th>Descripción</th>
                                 <th>Fecha Inicio</th>
-                                <th>Fecha Fin</th>
+                                <th>Fecha Compromiso</th>
                                 <th>Dias retrasado</th>
                                 <th>Estado</th>
                             </tr>
@@ -19,6 +20,7 @@
                         <tbody>
                             @foreach ($compromisos as $c)
                                 <tr class="seleccion" onclick="abrir_tramite({{ $c->id }})">
+
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="">
@@ -28,12 +30,19 @@
                                             <div class="ms-2">
                                                 <h6 class="mb-0 font-14">
                                                     {{ $c->empleado }}
+                                                    @if ($c->responsable != session('SESSION_CEDULA'))
+                                                        <span class="badge bg-secondary">Asignado para dar
+                                                            seguimiento</span>
+                                                    @endif
                                                 </h6>
                                                 <p class="mb-0 font-13 text-secondary">
                                                     {{ $c->cargo }}
                                                 </p>
                                             </div>
                                         </div>
+                                    </td>
+                                    <td>
+                                        {{ $c->id_tramite }}
                                     </td>
                                     <td>@php echo($c->descripcion) @endphp</td>
                                     <td>{{ $c->fecha_inicio }}</td>
@@ -65,10 +74,10 @@
                                         <td></td>
                                     @endif
                                     <!--<td class="w-25">
-                                    <div class="progress radius-10" style="height: 5px">
-                                        <div class="progress-bar bg-primary w-75" role="progressbar"></div>
-                                    </div>
-                                </td>-->
+                                                                                    <div class="progress radius-10" style="height: 5px">
+                                                                                        <div class="progress-bar bg-primary w-75" role="progressbar"></div>
+                                                                                    </div>
+                                                                                </td>-->
                                     <td>
                                         @if ($c->estado == 1)
                                             <div class="badge rounded-pill bg-warning w-100">

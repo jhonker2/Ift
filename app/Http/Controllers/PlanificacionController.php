@@ -38,15 +38,15 @@ class PlanificacionController extends Controller
 
             if (Session::get('SESSION_ROL') == 'ROL_PL_SIGOP' || Session::get('SESSION_ROL') == 'ROL_DESA') {
 
-                $compromisos = DB::select('SELECT c.id, f.descripcion, tf.descripcion, "dias_retrasado" ,c.fecha_inicio,c.responsable, "empleado","cargo", c.fecha_fin, c.descripcion, c.estado FROM tbl_tramites c
+                $compromisos = DB::select('SELECT c.id,c.id_tramite, f.descripcion, tf.descripcion, "dias_retrasado" ,c.fecha_inicio,c.responsable, "empleado","cargo", c.fecha_fin, c.asunto, c.estado FROM tbl_tramites c
                 INNER JOIN tbl_fuentes f on f.id= c.id_fuente
                 INNER JOIN tbl_tipos_fuentes tf on tf.id = c.id_tipo_fuente
                 WHERE c.estado=1');
             } else {
-                $compromisos = DB::select('SELECT c.id, f.descripcion, tf.descripcion, "dias_retrasado" ,c.fecha_inicio,c.responsable, "empleado","cargo", c.fecha_fin, c.descripcion, c.estado FROM tbl_tramites c
+                $compromisos = DB::select('SELECT c.id,c.id_tramite, f.descripcion, tf.descripcion, "dias_retrasado" ,c.fecha_inicio,c.responsable, "empleado","cargo", c.fecha_fin, c.asunto, c.estado FROM tbl_tramites c
                 INNER JOIN tbl_fuentes f on f.id= c.id_fuente
                 INNER JOIN tbl_tipos_fuentes tf on tf.id = c.id_tipo_fuente
-                WHERE  c.responsable=?', [Session::get('SESSION_CEDULA')]);
+                WHERE c.estado != 0 and (c.responsable=? or c.usuario_seguimiento = ?) ', [Session::get('SESSION_CEDULA'), Session::get('SESSION_CEDULA')]);
             }
 
 
@@ -103,10 +103,10 @@ class PlanificacionController extends Controller
 
             // Pasar los procesos y los datos de la sesión a la vista
             $botones = [];
-            $compromisos = DB::select('SELECT c.id, f.descripcion, tf.descripcion, "dias_retrasado" ,c.fecha_inicio,c.responsable, "empleado","cargo", c.fecha_fin, c.descripcion, c.estado FROM tbl_tramites c
+            $compromisos = DB::select('SELECT c.id, c.id_tramite, f.descripcion, tf.descripcion, "dias_retrasado" ,c.fecha_inicio,c.responsable, "empleado","cargo", c.fecha_fin, c.descripcion, c.estado FROM tbl_tramites c
             INNER JOIN tbl_fuentes f on f.id= c.id_fuente
             INNER JOIN tbl_tipos_fuentes tf on tf.id = c.id_tipo_fuente
-            WHERE c.estado=1 and c.responsable=?', [Session::get('SESSION_CEDULA')]);
+            WHERE c.estado=1 and (c.responsable=? or c.usuario_seguimiento = ?)', [Session::get('SESSION_CEDULA'), Session::get('SESSION_CEDULA')]);
 
             $usuarios = DB::connection('mysql_aflow')->select('select * from v_usuario_activo');
             //$cc=[];
@@ -215,7 +215,7 @@ class PlanificacionController extends Controller
             //$botones = DB::table('tbl_campos')->where('id_proceso', $proceso)->where('id_tarea', $tarea)->get();
 
             $init = DB::select('select * from tbl_funciones where id_proceso = ? and id_tarea = ? and ISNULL(id_campo)', [$proceso, $tarea]);
-            return view('Sigop.Tramite.proceso', compact('fuentes', 'tiposTramite', 'procesos', 'tareas', 'tramite_data', 'tramite', 'tramite_data', 'botones', 'init'));
+            return view('Sigop.Tramite.proceso', compact('fuentes', 'tiposTramite', 'procesos', 'tareas', 'tramite_data', 'tramite', 'botones', 'init'));
         } else {
             return Redirect::to('/login');
         }
@@ -509,20 +509,41 @@ class PlanificacionController extends Controller
             return response()->json(["res" => false, "sms" => "9998"]);
         }
     }
+    public function max_tramite()
+    {
+        $ultimo_tramite = DB::select('SELECT max(id) + 1  as id_tramite FROM tbl_tramites');
+        return $ultimo_tramite[0]->id_tramite;
+    }
 
-    public function guardar_tramite($id_tarea, $id_proceso, $fuente, $tipo, $responsable, $fecha_fin, $descripcion)
+    public function guardar_tramite($id_tarea, $id_proceso, $fuente, $tipo, $responsable, $fecha_fin, $descripcion, $seguimientoId, $asunto)
     {
         $date = Carbon::now();
-
+        $date_code = $date->format('Y');
+        $tramit = '';
+        $numero = $this->max_tramite();
+        if ($numero < 10) {
+            $tramit = '0000' . $numero;
+        } else if ($numero < 100) {
+            $tramit = '000' . $numero;
+        } else if ($numero < 1000) {
+            $tramit = '00' . $numero;
+        } else if ($numero < 10000) {
+            $tramit = '0' . $numero;
+        }
+        $code_tramite = $date_code . '-' . $tramit;
+        // return $code_tramite;
         $tramite = DB::table('tbl_tramites')->insertGetId([
+            'id_tramite' => $code_tramite,
             'id_proceso' => $id_proceso,
             'id_fuente' => $fuente,
             'id_tipo_fuente' => $tipo,
             'fecha_inicio' => $date,
             'fecha_fin' => $fecha_fin,
+            'asunto' => $asunto,
             'responsable' => $responsable,
             'descripcion' => $descripcion,
             'usuario_registro' => Session::get('SESSION_CEDULA'),
+            'usuario_seguimiento' => $seguimientoId,
             'estado' => 0,
             'created_at' => $date,
 
@@ -539,13 +560,15 @@ class PlanificacionController extends Controller
                 'fecha_asignacion' => $date,
 
             ]);
-            return $tramite;
+            return  $tramite;
+            return response()->json(["tramite" => $tramite, "code_tramite" => $code_tramite]);
         } else {
-            return $tramite;
+            return  $tramite;
+            return response()->json(["tramite" => $tramite, "code_tramite" => "0"]);
         }
     }
 
-    public function update_tramite($id_tramite, $id_tarea, $id_proceso, $fuente, $tipo, $responsable, $fecha_fin, $descripcion)
+    public function update_tramite($id_tramite, $id_tarea, $id_proceso, $fuente, $tipo, $responsable, $fecha_fin, $descripcion, $seguiminetoId, $asunto)
     {
         $date = Carbon::now();
 
@@ -555,11 +578,13 @@ class PlanificacionController extends Controller
                 'id_fuente' => $fuente,
                 'id_tipo_fuente' => $tipo,
                 'fecha_fin' => $fecha_fin,
+                'asunto' => $asunto,
                 'responsable' => $responsable,
                 'descripcion' => $descripcion,
+                'usuario_seguimiento' => $seguiminetoId,
                 'estado' => 0,
             ]);
-
+        // return $tramite;
         if ($tramite > 0) {
             // $tarea
             /* $tarea_Tramite = DB::table('tbl_tareas_tramites')->insertGetId([
@@ -585,7 +610,7 @@ class PlanificacionController extends Controller
 
         $tramite_existe = DB::table('tbl_tramites')->where('id', $r->id_tramite)->get();
         if ($tramite_existe == '[]') {
-            $id_tramite = $this->guardar_tramite($r->id_tarea, $r->id_proceso, $r->fuente, $r->tipo, $r->fecha_fin, $r->responsableId, $r->descripcion);
+            $id_tramite = $this->guardar_tramite($r->id_tarea, $r->id_proceso, $r->fuente, $r->tipo, $r->fecha_fin, $r->responsableId, $r->descripcion, $r->seguimientoId, $r->asunto);
 
             if ($id_tramite == 0) {
                 return response()->json(['error' => 'No se pudeo crear el tramite'], 400);
@@ -625,7 +650,7 @@ class PlanificacionController extends Controller
             }
             //llamar a la funcion insert_tramite
         } else {
-            $up_tramite = $this->update_tramite($r->id_tramite, $r->id_tarea, $r->id_proceso, $r->fuente, $r->tipo, $r->responsableId, $r->fecha_fin, $r->descripcion);
+            $up_tramite = $this->update_tramite($r->id_tramite, $r->id_tarea, $r->id_proceso, $r->fuente, $r->tipo, $r->responsableId, $r->fecha_fin, $r->descripcion, $r->seguimientoId, $r->asunto);
 
             if (!$r->hasFile('file')) {
                 return response()->json(['error' => 'No file uploaded.'], 400);
@@ -717,30 +742,22 @@ class PlanificacionController extends Controller
         $date = Carbon::now();
         if ($r->id_tramite == '0') {
             $fechaf = new Carbon($r->fecha_fin);
-            $id_tramite = $this->guardar_tramite($r->id_tarea, $r->id_proceso, $r->fuente, $r->tipo, $r->responsableId, $fechaf, $r->descripcion);
-            /*guardar_tramite
-            // return $fechaf;
-            $tramite = DB::table('tbl_tramites')->insertGetId([
-                'id_proceso' => $r->id_proceso,
-                'id_fuente' => $r->fuente,
-                'id_tipo_fuente' => $r->tipo,
-                'fecha_inicio' => $date,
-                'fecha_fin' => $fechaf,
-                'responsable' => $r->responsableId,
-                'descripcion' => $r->descripcion,
-                'usuario_registro' => Session::get('SESSION_CEDULA'),
-                'estado' => 0,
-                'created_at' => $date,
-
-            ]);*/
+            $id_tramite = $this->guardar_tramite($r->id_tarea, $r->id_proceso, $r->fuente, $r->tipo, $r->responsableId, $fechaf, $r->descripcion, $r->seguimientoId, $r->asunto);
+            // return $id_tramite->tramite;
             if ($id_tramite > 0) {
-                return response()->json(["respuesta" => true, 'id_tramite' => $id_tramite, 'sms' => 'Cambios guardados correctamente']);
+                $tramite_ = DB::table('tbl_tramites')->where('id', $id_tramite)->get();
+                $code = "";
+                foreach ($tramite_ as $c) {
+                    $code = $c->id_tramite;
+                }
+                return response()->json(["respuesta" => true, 'id_tramite' => $id_tramite, 'code_tramite' => $code, 'sms' => 'Cambios guardados correctamente']);
             } else {
                 return response()->json(["respuesta" => false]);
             }
         } else {
             $fechaf = new Carbon($r->fecha_fin);
-            $up_tramite = $this->update_tramite($r->id_tramite, $r->id_tarea, $r->id_proceso, $r->fuente, $r->tipo, $r->responsableId, $fechaf, $r->descripcion);
+            //return $r->seguimientoId;
+            $up_tramite = $this->update_tramite($r->id_tramite, $r->id_tarea, $r->id_proceso, $r->fuente, $r->tipo, $r->responsableId, $fechaf, $r->descripcion, $r->seguimientoId, $r->asunto);
             //return $up_tramite;
             if ($up_tramite > 0) {
                 return response()->json(["respuesta" => true, 'id_tramite' => $r->id_tramite, 'sms' => 'Cambios guardados correctamente']);
@@ -807,7 +824,7 @@ class PlanificacionController extends Controller
     public function open_tramite_borrador($id_tramite, $id_tarea)
     {
         //$tramite = DB::table('tbl_tramites')->where('id', $id_tramite)->get();
-        $tramite = DB::select('SELECT t.id,t.id_proceso,t.id_fuente,t.id_tipo_fuente,t.fecha_inicio,t.fecha_fin, t.fecha_ext,t.responsable,t.descripcion,t.usuario_registro,t.estado,
+        $tramite = DB::select('SELECT t.id,t.id_proceso,t.id_fuente,t.id_tipo_fuente,t.fecha_inicio,t.fecha_fin, t.fecha_ext,t.responsable,t.descripcion,t.usuario_seguimiento,t.usuario_registro,t.estado,
         f.descripcion as fuente, tf.descripcion as tipo_fuente FROM tbl_tramites t 
         INNER JOIN tbl_fuentes f ON f.id = t.id_fuente
         INNER JOIN tbl_tipos_fuentes tf ON tf.id = t.id_tipo_fuente

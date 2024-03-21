@@ -516,7 +516,7 @@ class SoapController extends Controller
             if ($rolSigopEncontrado) {
                 return response()->json(["message" => "Bienvenido", "redirectUrl" => 'home']);
             } else {
-                return response()->json(["message" => "Bienvenido", "redirectUrl" => 'index2']);
+                return response()->json(["message" => "Bienvenido", "redirectUrl" => 'home']);
             }
         } else {
             return response()->json(["message" => "Usuario no encontrado"], 401);
