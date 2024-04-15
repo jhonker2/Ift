@@ -2,9 +2,19 @@ let editor;
 let user_session_activa = $("#SESS_USER_ID").val();
 var toast = new Toasty();
 
+function model_fuente(name,y){
+    this.name = name;
+    this.y = y;
+  }
 const show_modal = (modal) => {
     $("#" + modal).modal('show');
+    $('#'+modal).on('show.bs.modal', function (e) {
+        alert("Modal Mostrada con Evento de Boostrap");
+      })
 }
+
+
+
 
 const hide_modal = (modal) => {
     $("#" + modal).modal('hide');
@@ -56,6 +66,8 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
                         alert("Error al guardar el tramite");
                     }
                 }else if(p==3){
+                    $("#load_p").hide();
+
                     if(res.respuesta){
                         Swal.fire(
                             "Tramite",
@@ -345,7 +357,12 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
                     let html='';
                     $(res).each(function (i, data) {
                         html +='<tr class="seleccion" onclick="abrir_tramite('+data.id+')">'
-                        html +='<td><div class="d-flex align-items-center"><div class=""><img src="img/person.png" class="rounded-circle" width="40" height="40" alt="" /></div><div class="ms-2"><h6 class="mb-0 font-14">'+data.empleado+'</h6><p class="mb-0 font-13 text-secondary">'+data.cargo+'</p> </div></div></td>'
+                        html +='<td><div class="d-flex align-items-center"><div class=""><img src="img/person.png" class="rounded-circle" width="40" height="40" alt="" /></div><div class="ms-2"><h6 class="mb-0 font-14">'+ data.empleado 
+                        if (data.responsable != user_session_activa){
+                            html +='<span class="badge bg-secondary">Asignado para dar seguimiento</span>'
+                        }
+                        html +='</h6><p class="mb-0 font-13 text-secondary">'+data.cargo+'</p> </div></div></td>'
+                        html +='<td>'+data.id_tramite+'</td>'
                         html +='<td>'+data.descripcion+'</td>'
                         html +='<td>'+data.fecha_inicio+'</td>'
                         html +='<td>'+data.fecha_fin +'</td>'
@@ -379,6 +396,31 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
                 html +='</tr>'
                     });
                 $("#body_compromisos").html(html);
+                }else if(p==6){
+                  
+                    let series = [{"name":'Fuentes', "colorByPoint": true, "data":""}]
+                    let data_p = [];
+                    let objeto_p;
+                    $(res).each(function(i, v){
+                        objeto_p = new model_fuente(v.descripcion,parseInt(v.total_tramites));
+                        data_p.push(objeto_p);
+                      });
+                      series[0].data = data_p;
+                      console.log(series);
+                    grafico_barras('c_fuentes',"Total de tramites por Fuentes","", "Total tramites",series)
+                }
+                else if(p==7){
+                  
+                    let series = [{"name":'Fuentes', "colorByPoint": true, "data":""}]
+                    let data_p = [];
+                    let objeto_p;
+                    $(res).each(function(i, v){
+                        objeto_p = new model_fuente(v.descripcion,parseInt(v.total_tramites));
+                        data_p.push(objeto_p);
+                      });
+                      series[0].data = data_p;
+                      console.log(series);
+                    grafico_barras('c_tfuentes',"Total de tramites por Tipo Fuentes","", "Total tramites",series)
                 }
             },
         }).fail(function (jqXHR, textStatus, errorthrown) {
@@ -455,4 +497,57 @@ const delete_file = (id_archivo) => {
     _AJAX_('/sp_delete_file/'+id_archivo,'GET','','',4);
 
 }
+
+
+const grafico_barras = (contenedor, titulo, subtitulo, TitleyAxis, series) => {
+    Highcharts.chart(contenedor, {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            align: 'left',
+            text: titulo
+        },
+        subtitle: {
+            align: 'left',
+            text: subtitulo
+        },
+        accessibility: {
+            announceNewData: {
+                enabled: true
+            }
+        },
+        xAxis: {
+            type: 'category'
+        },
+        yAxis: {
+            title: {
+                text: TitleyAxis
+            }
+
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.y:.1f}%'
+                }
+            }
+        },
+
+        tooltip: {
+            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
+        },
+
+        series: series
+
+    });
+}
+
+
 

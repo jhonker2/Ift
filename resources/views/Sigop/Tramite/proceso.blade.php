@@ -1,15 +1,23 @@
 @extends('Sigop.Tramite.base')
 @section('css')
 <link href="{{ asset('assets/css/procesos.css') }}" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 @endsection
 @section('content')
-
+<div id="load_p" class="load hide">
+    <div class="load_padre">
+        <div class="load_hijo">
+            <img src="{{asset('img/logoc.png')}}" alt="logo_load" class="w7">
+        </div>
+        <div class="load_hijo">
+            <span>Cargando...</span>
+        </div>
+    </div>
+</div>
 <div class="page-content">
-    <!--breadcrumb-->
     <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
         @if (isset($tramite))
         <div class="breadcrumb-title pe-3 mt-5"><span>#</span>
-
             @if(sizeof($tramite_data)!=0)
             @foreach($tramite_data as $td)
             <span id="code_tramite">{{$td->id_tramite}}</span>
@@ -204,10 +212,56 @@
     @endif
     @endforeach
 </div>
+
+<!-- MODAL REASIGNAR-->
+<div class="modal fade" id="modal_reasignar" tabindex="-1" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Reasignar Tramite</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <label for="single-select-field" class="form-label">Usuario a reasignar</label>
+                    <select class="js-example-basic-single">
+                        <option value="0">Seleccione un usuario</option>
+                        @foreach($usuarios as $u)
+                        <option value="{{$u->IDENTIFICACION}}">{{$u->NOMBRES}}</option>
+                        @endforeach
+                    </select>
+                    <div class="col-md-12">
+                        <textarea class="form-control" id="ip_observacion_reasignar" placeholder="Observacion..."
+                            rows="3"></textarea>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="ip_ace_reasignar">
+                            <label class="form-check-label" for="ip_ace_reasignar">Estoy seguro(a) de que
+                                deseo
+                                devolver
+                                la tarea</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="btn_s_fuente"
+                        onclick="save_fuente()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('js')
 <script src="{{ asset('js/upload.js') }}"></script>
 <script src="{{ '/ckeditor5-build-classic/ckeditor.js' }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="{{ asset('assets/js/procesos.js') }}"></script>
+<script src="{{ asset('js/select.custom.js') }}"></script>
+<script>
+    $(document).ready(function () {
+        $('.js-example-basic-single').select2();
+    });
+</script>
 @endsection

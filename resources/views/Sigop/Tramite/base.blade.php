@@ -328,19 +328,19 @@
 							</div>
 						</a>
 						<ul class="dropdown-menu dropdown-menu-end">
-							<li><a class="dropdown-item d-flex align-items-center" href="javascript:;"><i
+							<!--<li><a class="dropdown-item d-flex align-items-center" href="javascript:;"><i
 										class="bx bx-user fs-5"></i><span>Perfil</span></a>
 							</li>
 							<li><a class="dropdown-item d-flex align-items-center" href="javascript:;"><i
 										class="bx bx-cog fs-5"></i><span>Configuracion</span></a>
-							</li>
-							<li><a class="dropdown-item d-flex align-items-center" href="javascript:;"><i
+							</li>-->
+							<li><a class="dropdown-item d-flex align-items-center" href="/dashboard"><i
 										class="bx bx-home-circle fs-5"></i><span>Dashboard</span></a>
 							</li>
 							</li>
-							<li><a class="dropdown-item d-flex align-items-center" href="javascript:;"><i
+							<!--<li><a class="dropdown-item d-flex align-items-center" href="javascript:;"><i
 										class="bx bx-download fs-5"></i><span>Descargar Docs</span></a>
-							</li>
+							</li>-->
 							<li>
 								<div class="dropdown-divider mb-0"></div>
 							</li>
@@ -574,43 +574,7 @@
 				</div>
 			</div>
 
-			<!-- MODAL REASIGNAR-->
-			<div class="modal fade" id="modal_reasignar" tabindex="-1" style="display: none;" aria-hidden="true">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title">Reasignar Tramite</h5>
-							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-						</div>
-						<div class="modal-body">
-							<div class="col-md-12">
-								<select class="form-select mb-3" aria-label="Default select example">
-									<option selected="">Open this select menu</option>
-									<option value="1">One</option>
-									<option value="2">Two</option>
-									<option value="3">Three</option>
-								</select>
-								<div class="col-md-12">
-									<textarea class="form-control" id="ip_observacion_reasignar"
-										placeholder="Observacion..." rows="3"></textarea>
-									<div class="form-check">
-										<input class="form-check-input" type="checkbox" id="ip_ace_reasignar">
-										<label class="form-check-label" for="ip_ace_reasignar">Estoy seguro(a) de que
-											deseo
-											devolver
-											la tarea</label>
-									</div>
-								</div>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-								<button type="button" class="btn btn-primary" id="btn_s_fuente"
-									onclick="save_fuente()">Guardar</button>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+
 
 			<div class="modal fade" id="modal_devolver" tabindex="-1" style="display: none;" aria-hidden="true">
 				<div class="modal-dialog">

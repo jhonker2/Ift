@@ -11,11 +11,12 @@ use App\Http\Controllers\SoaplecturaController;
 use App\Http\Controllers\PlanificacionController;
 use App\Http\Controllers\CrearProcesoController;
 
+use \App\Mail\Notificar;
 
 
 //Route::get('prueba', function () {return view('prueba');});
 
-Route::get('Ruta', [ControllersPlanificar::class, 'rutas']);
+/*Route::get('Ruta', [ControllersPlanificar::class, 'rutas']);
 Route::get('errores', [ControllersPlanificar::class, 'Errores']);
 
 
@@ -104,9 +105,7 @@ Route::get('facturas_reales', [ControllersMonitoreo::class, 'facturas_reales'])-
 
 Route::get('reporteria', [ControllersMonitoreo::class, 'reporteria'])->name('reporteria');
 
-Route::get('/dashboard', function () {
-    return view('Tramite.dasboard');
-})->name('dashboard');
+
 
 
 
@@ -137,12 +136,14 @@ Route::middleware(['blocke'])->group(function () {
 
     /*CAMBIOS JHONY GUAMAN*/
 
-    Route::get('/get_total_ejecutas', [ControllersMonitoreo::class, 'get_ejecutadas']);
+/* Route::get('/get_total_ejecutas', [ControllersMonitoreo::class, 'get_ejecutadas']);
 });
-
+/*
 /***********/
+
 /**SIGOP***/
 
+Route::get('/', [PlanificacionController::class, 'login']);
 Route::get('login', [PlanificacionController::class, 'login']);
 Route::post('/loginingresar2', [SoapController::class, 'autenticacionWeb'])->name('autenticacionWeb');
 Route::get('logout', [PlanificacionController::class, 'logout']);
@@ -150,6 +151,7 @@ Route::get('logout', [PlanificacionController::class, 'logout']);
 Route::get('home', [PlanificacionController::class, 'index']);
 Route::get('/index2', [PlanificacionController::class, 'index2'])->name('index2');
 Route::get('GET_compromisos/{tipo}', [PlanificacionController::class, 'Getcompromisos']);
+Route::get('GET_compromisos_user/{tipo}', [PlanificacionController::class, 'Getcompromisos_user']);
 
 Route::get('/mensajeria2', [PlanificacionController::class, 'mensajeria2'])->name('mensajeria2');; // Usa la sintaxis de array para referenciar el método del controlador
 Route::get('/mistramites', [PlanificacionController::class, 'mistramites'])->name('mistramites');; // Usa la sintaxis de array para referenciar el método del controlador
@@ -222,3 +224,16 @@ Route::post('sp_guardar_tarea', [PlanificacionController::class, 'sp_guardar_tar
 /*FILE*/
 Route::get('sp_delete_file/{id_archivo}', [PlanificacionController::class, 'sp_delete_file']);
 Route::get('sp_download_file/{id_archivo}', [PlanificacionController::class, 'sp_download_file']);
+
+
+/**DASHBOARD */
+Route::get('dashboard', [PlanificacionController::class, 'dashboard']);
+Route::get('get_series_fuentes', [PlanificacionController::class, 'get_series_fuentes']);
+Route::get('get_series_tfuentes', [PlanificacionController::class, 'get_series_tfuentes']);
+
+
+Route::get('email/send', function () {
+    $email = Mail::to('jhonker2@hotmail.com', 'Jhony Guaman')->send(new Notificar("12345", "ASUNTO DE PRUEBA", "JHONY", "GUAMAN", "15/04/2024", "16/04/2024"));
+    //$email = Mail::to("jhony_guaman@portoaguas.gob.ec", "Xavier Cedeno")->send(new Notificar("7522583"));
+    return "";
+});

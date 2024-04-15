@@ -232,6 +232,7 @@ const load_file_server = (file_name) => {
 }
 
 const f_send_tramite = () => {
+    $("#load_p").show();
     let id_tramite = $("#id_tramite_init").html();
     let id_tarea = $("#id_tarea").val();
     let id_proceso = $("#id_proceso").val();

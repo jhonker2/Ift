@@ -13,7 +13,7 @@
     <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4">
 
         <div class="col">
-            <div class="card seleccion radius-10" onclick="mostrar_tramites(1)">
+            <div class="card seleccion radius-10" onclick="mostrar_tramites(1,1)">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div>
@@ -30,7 +30,7 @@
         </div>
 
         <div class="col">
-            <div class="card seleccion radius-10" onclick="mostrar_tramites(3)">
+            <div class="card seleccion radius-10" onclick="mostrar_tramites(3,1)">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div>
@@ -49,7 +49,7 @@
         </div>
 
         <div class="col">
-            <div class="card seleccion radius-10" onclick="mostrar_tramites(2)">
+            <div class="card seleccion radius-10" onclick="mostrar_tramites(2,1)">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div>
@@ -156,6 +156,62 @@
 @else
 <div class="page-content">
     <hr />
+    <hr />
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4">
+
+        <div class="col">
+            <div class="card seleccion radius-10" onclick="mostrar_tramites(1,0)">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <p class="mb-0 text-secondary">Compromisos Completados</p>
+                            <h4 class="my-1">{{$completados}}</h4>
+                            <!--<p class="mb-0 font-13 text-danger"><i class="bx bxs-down-arrow align-middle"></i>$34 from
+                                last week</p>-->
+                        </div>
+                        <div class="widgets-icons bg-light-success text-success ms-auto"><i class="bx bx-file"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card seleccion radius-10" onclick="mostrar_tramites(3,0)">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <p class="mb-0 text-secondary">Compromisos vencidos</p>
+                            @foreach($vencidos as $v)
+                            <h4 class="my-1">{{$v->total}}</h4>
+                            @endforeach
+                            <!--<p class="mb-0 font-13 text-danger"><i class="bx bxs-down-arrow align-middle"></i>$34 from
+                                last week</p>-->
+                        </div>
+                        <div class="widgets-icons bg-light-danger text-danger ms-auto"><i class="bx bx-x-circle"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card seleccion radius-10" onclick="mostrar_tramites(2,0)">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <p class="mb-0 text-secondary">Compromisos en Ejecucion</p>
+                            <h4 class="my-1">{{$ejecucion}}</h4>
+                            <!--<p class="mb-0 font-13 text-danger"><i class="bx bxs-down-arrow align-middle"></i>$34 from
+                                last week</p>-->
+                        </div>
+                        <div class="widgets-icons bg-light-warning text-warning ms-auto"><i class="bx bxs-binoculars"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="card radius-10">
         <div class="card-body">
             <div class="table-responsive lead-table">
@@ -252,17 +308,31 @@
 
 @section('js')
 <script>
-    const mostrar_tramites = (tipo) => {
-        if (tipo == 1) { // completados
-            _AJAX_("/GET_compromisos/" + tipo, "GET", "", "", 5);
+    const mostrar_tramites = (tipo, v) => {
+        if (v == 0) {
+            if (tipo == 1) { // completados
+                _AJAX_("/GET_compromisos_user/" + tipo, "GET", "", "", 5);
 
-        } else if (tipo == 2) { // vencidos
-            _AJAX_("/GET_compromisos/" + tipo, "GET", "", "", 5);
+            } else if (tipo == 2) { // vencidos
+                _AJAX_("/GET_compromisos_user/" + tipo, "GET", "", "", 5);
 
-        } else if (tipo == 3) { // ejecucion
-            _AJAX_("/GET_compromisos/" + tipo, "GET", "", "", 5);
+            } else if (tipo == 3) { // ejecucion
+                _AJAX_("/GET_compromisos_user/" + tipo, "GET", "", "", 5);
 
+            }
+        } else {
+            if (tipo == 1) { // completados
+                _AJAX_("/GET_compromisos/" + tipo, "GET", "", "", 5);
+
+            } else if (tipo == 2) { // vencidos
+                _AJAX_("/GET_compromisos/" + tipo, "GET", "", "", 5);
+
+            } else if (tipo == 3) { // ejecucion
+                _AJAX_("/GET_compromisos/" + tipo, "GET", "", "", 5);
+
+            }
         }
+
     }
 </script>
 @endsection
