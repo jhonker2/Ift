@@ -1261,4 +1261,9 @@ class PlanificacionController extends Controller
         GROUP BY f.descripcion');
         return $series;
     }
+
+    public function enviar_correo()
+    {
+        $email = Mail::to('jhonker2@hotmail.com', 'Jhony Guaman')->send(new Notificar("12345", "ASUNTO DE PRUEBA", "JHONY", "GUAMAN", "15/04/2024", "16/04/2024"));
+    }
 }

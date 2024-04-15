@@ -232,8 +232,4 @@ Route::get('get_series_fuentes', [PlanificacionController::class, 'get_series_fu
 Route::get('get_series_tfuentes', [PlanificacionController::class, 'get_series_tfuentes']);
 
 
-Route::get('email/send', function () {
-    $email = Mail::to('jhonker2@hotmail.com', 'Jhony Guaman')->send(new Notificar("12345", "ASUNTO DE PRUEBA", "JHONY", "GUAMAN", "15/04/2024", "16/04/2024"));
-    //$email = Mail::to("jhony_guaman@portoaguas.gob.ec", "Xavier Cedeno")->send(new Notificar("7522583"));
-    return "";
-});
+Route::get('email/send', [PlanificacionController::class, 'enviar_correo']);
