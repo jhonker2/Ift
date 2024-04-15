@@ -1044,7 +1044,7 @@ class PlanificacionController extends Controller
                             $fecha_envio = $t->fecha_inicio;
                             $fecha_compro = $t->fecha_fin;
 
-                            $email = Mail::to($email, 'Portoaguas')->send(new Notificar($t->id_tramite, $t->asunto, $usuario, $usuario_solicitante, $fecha_envio, $fecha_compro));
+                            //$email = Mail::to($email, 'Portoaguas')->send(new Notificar($t->id_tramite, $t->asunto, $usuario, $usuario_solicitante, $fecha_envio, $fecha_compro));
                         }
                     }
                     //$correo = DB::connection('sql_cumpleanos')->
