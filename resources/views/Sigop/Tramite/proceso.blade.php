@@ -261,7 +261,11 @@
 <script src="{{ asset('js/select.custom.js') }}"></script>
 <script>
     $(document).ready(function () {
-        $('.js-example-basic-single').select2();
+        $('.js-example-basic-single').select2(
+            {
+                dropdownParent: $('#modal_reasignar')
+            }
+        );
     });
 </script>
 @endsection

@@ -192,7 +192,7 @@ class PlanificacionController extends Controller
         return response()->json(['message' => 'Proceso guardado en sesión']);
     }
 
-    public function proceso($proceso, $tarea, $tramite = 0)
+    public function proceso($proceso, $tarea, $tramite = 0, $tarea_tramite = 0)
     {
 
         if (Session::get('SESSION_CEDULA')) {
@@ -204,19 +204,33 @@ class PlanificacionController extends Controller
             $tramite_data = DB::table('tbl_tramites')->where('id', $tramite)->get();
             Session::put('SESSION_PAGE', 'COMPROMISOS');
 
-            $tramite_tarea = DB::select("select * from tbl_tareas_tramites where id =  (select max(id) from tbl_tareas_tramites where id_tramite = ? and id_tarea = ? and estado = 'P')", [$tramite, $tarea]);
+            if ($tarea_tramite != 0) {
+                $tramite_tarea = DB::select("select * from tbl_tareas_tramites where id =  (select max(id) from tbl_tareas_tramites where id_tramite = ? and id = ? )", [$tramite, $tarea_tramite]);
+            } else {
+
+                $tramite_tarea = DB::select("select * from tbl_tareas_tramites where id =  (select max(id) from tbl_tareas_tramites where id_tramite = ? and id_tarea = ? and estado = 'P')", [$tramite, $tarea]);
+            }
             //return $tramite_tarea;
+            /*  if ($tramite_tarea == []) {
+               
+            } else {*/
             if ($tramite_tarea == []) {
                 $botones = DB::select('select c.id, c.id_proceso, c.id_tarea, c.tipo, c.etiqueta, c.icono, f.descripcion, f.query from tbl_campos c
-                LEFT JOIN tbl_funciones f ON f.id_campo = c.id
-                where c.id_proceso =? and c.id_tarea=?', [$proceso, $tarea]);
+                            LEFT JOIN tbl_funciones f ON f.id_campo = c.id
+                            where c.id_proceso =? and c.id_tarea=?', [$proceso, $tarea]);
             } else {
                 foreach ($tramite_tarea as $t) {
                     if ($t->estado == 'P') {
                         $botones = [];
+                    } else {
+                        $botones = DB::select('select c.id, c.id_proceso, c.id_tarea, c.tipo, c.etiqueta, c.icono, f.descripcion, f.query from tbl_campos c
+                            LEFT JOIN tbl_funciones f ON f.id_campo = c.id
+                            where c.id_proceso =? and c.id_tarea=?', [$proceso, $tarea]);
                     }
                 }
             }
+
+            // }
 
 
             //$botones = DB::table('tbl_campos')->where('id_proceso', $proceso)->where('id_tarea', $tarea)->get();
@@ -836,6 +850,23 @@ class PlanificacionController extends Controller
             where t.estado=0 and t.usuario_registro=?', [Session::get('SESSION_CEDULA')]); //DB::table('tbl_tramites')->where('estado', 0)->where('usuario_registro', Session::get('SESSION_CEDULA'))->get();
             $botones = [];
             return view('Sigop.Borrador.index', compact('tramites', 'botones'));
+        } else {
+            return Redirect::to('/login');
+        }
+    }
+
+    public function nuevas()
+    {
+        if (Session::get('SESSION_CEDULA')) {
+            Session::put('SESSION_PAGE', 'Borradores');
+            $tramites = DB::select("
+            select t.id,tt.id as id_tarea,t.id_proceso,t.id_tramite,p.descripcion as proceso,t.fecha_inicio, ta.descripcion as tarea, t.estado from tbl_tramites t 
+            INNER JOIN tbl_tareas_tramites tt ON t.id=tt.id_tramite
+            INNER JOIN tbl_procesos p ON p.id = tt.id_proceso
+            INNER JOIN tbl_tareas ta ON ta.id = tt.id_tarea
+            where tt.estado = 'E' and tt.id_usuario = ? and t.estado=1  ORDER BY 1 desc", [Session::get('SESSION_CEDULA')]); //DB::table('tbl_tramites')->where('estado', 0)->where('usuario_registro', Session::get('SESSION_CEDULA'))->get();
+            $botones = [];
+            return view('Sigop.Nuevas.index', compact('tramites', 'botones'));
         } else {
             return Redirect::to('/login');
         }

@@ -9,7 +9,8 @@ function model_fuente(name,y){
 const show_modal = (modal) => {
     $("#" + modal).modal('show');
     $('#'+modal).on('show.bs.modal', function (e) {
-        alert("Modal Mostrada con Evento de Boostrap");
+       // alert("Modal Mostrada con Evento de Boostrap");
+       
       })
 }
 
@@ -247,7 +248,7 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
 
                         }else if(data.estado=='E'){
                             if(data.id_usuario==user_session_activa){
-                                html+='<td> <a href="/proceso/'+data.id_proceso+'/'+data.id_tarea+'/'+data.id_tramite+'">EJECUCIÓN</a></td>'
+                                html+='<td> <a href="/proceso/'+data.id_proceso+'/'+data.id_tarea+'/'+data.id_tramite+'/'+data.id+'">EJECUCIÓN</a></td>'
                             }else{
                                 html +='<td>EJECUCION</td>'
                             }
@@ -334,6 +335,10 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
                                 }else{
                                     $("#cont_chk").html("No hay datos que mostrar");
                                 }
+                            }else if(data.id_tarea==4 && data.estado=='E'){
+                                obs += data.observacion;
+                                $("#grupo_observacion").show();
+                                
                             }
                          });
                          $("#txt_observacion_4").html(obs)   

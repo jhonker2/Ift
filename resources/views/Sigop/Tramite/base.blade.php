@@ -143,8 +143,10 @@
 					<ul>
 						@if(session('SESSION_ROL')=="ROL_PL_SIGOP" ||session('SESSION_ROL')=="ROL_DESA" )
 						<li><a href="/proceso/1/1"><i class='bx bx-radio-circle'></i>
-								Nuevos</a></li>
+								Crear compromisos</a></li>
 						@endif
+						<li><a href="/nuevas"><i class='bx bx-radio-circle'></i>
+								Nuevas</a></li>
 						<li><a href="/borrador"><i class='bx bx-radio-circle'></i>
 								Borrador</a></li>
 						<!--<li><a href="/borrador"><i class='bx bx-radio-circle'></i>

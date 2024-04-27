@@ -196,7 +196,7 @@ Route::post('store/compromisos', [PlanificacionController::class, 'store_comprom
 Route::post('enviar_tramite', [PlanificacionController::class, 'ps_enviar_tramite']);
 Route::get('get_tareas_tramites/{id}', [PlanificacionController::class, 'tarea_tramites']);
 //Route::get('proceso/{proceso}/{tarea}/{tramite}', [PlanificacionController::class, 'FRM_COMPROMISO']);
-Route::get('proceso/{proceso}/{tarea}/{tramite?}', [PlanificacionController::class, 'proceso']);
+Route::get('proceso/{proceso}/{tarea}/{tramite?}/{tarea_tramite?}', [PlanificacionController::class, 'proceso']);
 
 Route::post('archivos', [PlanificacionController::class, 'GET_archivos']);
 Route::post('uplodad/file', [PlanificacionController::class, 'upload_file_ftp']);
@@ -212,6 +212,8 @@ Route::get('borrador', [PlanificacionController::class, 'borrador']);
 Route::get('open/{id_tramite}/{id_tarea}/tramite', [PlanificacionController::class, 'open_tramite_borrador']);
 Route::get('open/{id_tramite}/tramite', [PlanificacionController::class, 'open_tramite']);
 
+/**NUEVAS */
+Route::get('nuevas', [PlanificacionController::class, 'nuevas']);
 
 /**DEVOLVER TAREA */
 Route::post('sp_devolver_tarea', [PlanificacionController::class, 'sp_devolver_tarea']);
