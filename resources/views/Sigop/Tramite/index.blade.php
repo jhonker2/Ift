@@ -58,7 +58,8 @@
                             <!--<p class="mb-0 font-13 text-danger"><i class="bx bxs-down-arrow align-middle"></i>$34 from
                                 last week</p>-->
                         </div>
-                        <div class="widgets-icons bg-light-warning text-warning ms-auto"><i class="bx bxs-binoculars"></i>
+                        <div class="widgets-icons bg-light-warning text-warning ms-auto"><i
+                                class="bx bxs-binoculars"></i>
                         </div>
                     </div>
                 </div>
@@ -68,7 +69,7 @@
 
     <div class="card radius-10">
         <div class="card-body">
-            <div class="table-responsive lead-table">
+            <div class="table-responsive-sm">
                 <table class="table mb-0 align-middle">
                     <thead class="table-light">
                         <tr>
@@ -87,7 +88,8 @@
                             <td>
                                 <div class="d-flex align-items-center">
                                     <div class="">
-                                        <img src="img/person.png" class="rounded-circle" width="40" height="40" alt="" />
+                                        <img src="img/person.png" class="rounded-circle" width="40" height="40"
+                                            alt="" />
                                     </div>
                                     <div class="ms-2">
                                         <h6 class="mb-0 font-14">
@@ -205,7 +207,8 @@
                             <!--<p class="mb-0 font-13 text-danger"><i class="bx bxs-down-arrow align-middle"></i>$34 from
                                 last week</p>-->
                         </div>
-                        <div class="widgets-icons bg-light-warning text-warning ms-auto"><i class="bx bxs-binoculars"></i>
+                        <div class="widgets-icons bg-light-warning text-warning ms-auto"><i
+                                class="bx bxs-binoculars"></i>
                         </div>
                     </div>
                 </div>
@@ -233,7 +236,8 @@
                             <td>
                                 <div class="d-flex align-items-center">
                                     <div class="">
-                                        <img src="img/person.png" class="rounded-circle" width="40" height="40" alt="" />
+                                        <img src="img/person.png" class="rounded-circle" width="40" height="40"
+                                            alt="" />
                                     </div>
                                     <div class="ms-2">
                                         <h6 class="mb-0 font-14">
