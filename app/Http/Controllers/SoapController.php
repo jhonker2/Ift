@@ -504,7 +504,7 @@ class SoapController extends Controller
                     $r->session()->put('SESSION_USER', $user->nombres . ' ' . $user->apellidos);
                     $r->session()->put('SESSION_PAGE', 'Inicio');
 
-                    if ($user->id_rol == 'ROL_PL_SIGOP' || $user->id_rol == 'ROL_DESA') {
+                    if ($user->id_rol == 'ROL_PL_SIGOP' || $user->id_rol == 'ROL_DESA' || $user->id_rol == 'R_SGOP_DIR') {
                         $rolSigopEncontrado = true;
                         $r->session()->put('SESSION_ROL', $user->id_rol);
                     }

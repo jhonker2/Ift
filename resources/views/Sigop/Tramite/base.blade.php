@@ -141,7 +141,8 @@
 						<div class="menu-title">Mis Opciones</div>
 					</a>
 					<ul>
-						@if(session('SESSION_ROL')=="ROL_PL_SIGOP" ||session('SESSION_ROL')=="ROL_DESA" )
+						@if(session('SESSION_ROL')=="ROL_PL_SIGOP" ||session('SESSION_ROL')=="ROL_DESA" ||
+						session('SESSION_ROL')=="R_SGOP_DIR" )
 						<li><a href="/proceso/1/1"><i class='bx bx-radio-circle'></i>
 								Crear compromisos</a></li>
 						@endif
