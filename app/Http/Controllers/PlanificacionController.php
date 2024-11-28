@@ -58,7 +58,7 @@ class PlanificacionController extends Controller
 
 
 
-            $usuarios = DB::connection('mysql_aflow')->select('select * from v_usuario_activo');
+            $usuarios = DB::connection('mysql_aflow')->select('select * from v_user_full');
             //$cc=[];
             foreach ($compromisos as $c) {
                 $fecha1 = new \DateTime($date);
@@ -1290,6 +1290,18 @@ class PlanificacionController extends Controller
         INNER JOIN tbl_tipos_fuentes f ON f.id = t.id_fuente
         and t.estado !=0 						
         GROUP BY f.descripcion');
+        return $series;
+    }
+
+    public function get_ttramites(Request $r)
+    {
+        $series = DB::select("select 'ejecucion' as titpo, COUNT(*) total from tbl_tramites where fecha_inicio BETWEEN '$r->fecha_inicio' and '$r->fecha_fin' and estado=1 and fecha_fin>NOW()
+                              union ALL
+                              select 'completados' as titpo, COUNT(*) total from tbl_tramites where fecha_inicio BETWEEN '$r->fecha_inicio' and '$r->fecha_fin'	 and estado=2
+                              union all   
+                              select 'vencidos' as titpo, COUNT(*) total from tbl_tramites where fecha_inicio BETWEEN '$r->fecha_inicio' and '$r->fecha_fin' and estado=1 and fecha_fin< NOW()
+                              union all 
+                              select 'total' as titpo, COUNT(*) total from tbl_tramites where fecha_inicio BETWEEN '$r->fecha_inicio' and '$r->fecha_fin'");
         return $series;
     }
 
