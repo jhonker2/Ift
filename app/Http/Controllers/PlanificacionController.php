@@ -805,17 +805,18 @@ class PlanificacionController extends Controller
 
     public function tarea_tramites($tramite)
     {
-        $tareas_tramites = DB::select('SELECT tt.id, tt.id_tramite,tt.id_tarea,tt.id_proceso, tp.descripcion as proceso, ta.descripcion as tarea, tt.id_usuario,"empleado", tt.estado, tt.fecha_ejecucion, tt.fecha_fin, tt.fecha_asignacion FROM tbl_tareas_tramites tt 
+        $tareas_tramites = DB::select('SELECT tt.id, tt.id_tramite,tt.id_tarea,tt.id_proceso, tp.descripcion as proceso, ta.descripcion as tarea, tt.id_usuario,"empleado","rol", tt.estado, tt.fecha_ejecucion, tt.fecha_fin, tt.fecha_asignacion FROM tbl_tareas_tramites tt 
         INNER JOIN tbl_tareas ta ON ta.id=tt.id_tarea
         INNER JOIN tbl_procesos tp ON tp.id=tt.id_proceso
         where id_tramite=? ORDER BY tt.id ASC', [$tramite]);
 
-        $usuarios = DB::connection('mysql_aflow')->select('select * from v_usuario_activo');
+        $usuarios = DB::connection('mysql_aflow')->select('select * from v_user_full');
         //$cc=[];
         foreach ($tareas_tramites as $c) {
             foreach ($usuarios as $u) {
                 if ($c->id_usuario == $u->cedula) {
                     $c->empleado = $u->nombres . ' ' . $u->apellidos;
+                    //$c->rol = $
                 }
             }
         }
