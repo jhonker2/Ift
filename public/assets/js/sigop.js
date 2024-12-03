@@ -133,6 +133,22 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
 
                         //hide_modal('modal_e_fuente');
                     }
+                }else if(p==13){
+                    let titulo='';
+                    let contenedor = 'container';
+                    let data_p = [];
+
+                    $(res).each(function(i, v){
+                        //objeto_p = new model_fuente(v.descripcion,parseInt(v.total_tramites));
+                        if(v.titpo!='total'){
+                            data_p.push(Array(v.titpo,v.total));
+                        }else{
+                            titulo = 'Total de tramites<br>' + v.total;
+                        }
+                      });
+                      grafico_pie(contenedor,titulo,data_p);
+                      console.log(data_p);
+
                 }
                 
             },
@@ -230,6 +246,7 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
                 }else if(p==2){
                     let html = "";
                     let id_tramite=0;
+                    let rol =$("#rol").val();
                     $(res).each(function (i, data) {
                         html+='<tr><th scope="row">'+data.id+'</th>'
                         html+='<td>'+data.tarea+'</td>'
@@ -247,10 +264,15 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
                             html+='<td> <a href="/proceso/'+data.id_proceso+'/'+data.id_tarea+'/'+data.id_tramite+'">PROCESADO</a></td>'
 
                         }else if(data.estado=='E'){
+                            debugger
                             if(data.id_usuario==user_session_activa){
                                 html+='<td> <a href="/proceso/'+data.id_proceso+'/'+data.id_tarea+'/'+data.id_tramite+'/'+data.id+'">EJECUCIÓN</a></td>'
                             }else{
-                                html +='<td>EJECUCION</td>'
+                                if(rol=="ROL_PL_SIGOP"||rol=="ROL_DESA" ){
+                                    html+='<td> <a href="/proceso/'+data.id_proceso+'/'+data.id_tarea+'/'+data.id_tramite+'/'+data.id+'">EJECUCIÓN</a></td>'
+                                }else{
+                                    html +='<td>EJECUCION</td>'
+                                }
                             }
                         }
                         html+='</tr>'
@@ -539,7 +561,7 @@ const grafico_barras = (contenedor, titulo, subtitulo, TitleyAxis, series) => {
                 borderWidth: 0,
                 dataLabels: {
                     enabled: true,
-                    format: '{point.y:.1f}%'
+                    format: '{point.y}'
                 }
             }
         },
@@ -552,6 +574,62 @@ const grafico_barras = (contenedor, titulo, subtitulo, TitleyAxis, series) => {
         series: series
 
     });
+}
+
+const grafico_pie = (contenedor,titulo,data) => {
+    Highcharts.chart(contenedor, {
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: 0,
+            plotShadow: false
+        },
+        title: {
+            text: titulo,
+            align: 'center',
+            verticalAlign: 'middle',
+            y: 60,
+            style: {
+                fontSize: '1.1em'
+            }
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        accessibility: {
+            point: {
+                valueSuffix: '%'
+            }
+        },
+        plotOptions: {
+            pie: {
+                dataLabels: {
+                    enabled: true,
+                    distance: -50,
+                    style: {
+                        fontWeight: 'bold',
+                        color: 'white'
+                    }
+                },
+                startAngle: -90,
+                endAngle: 90,
+                center: ['50%', '75%'],
+                size: '110%',
+                colors: [
+                    '#EAED19',
+                    '#29D271',
+                    '#FF3333'
+                ]
+            }
+        },
+        series: [{
+            type: 'pie',
+            name: 'Tramites SIGOP',
+            innerSize: '50%',
+            data: data 
+        }]
+
+    });
+
 }
 
 
