@@ -258,7 +258,7 @@
 <script src="{{ asset('js/upload.js') }}"></script>
 <script src="{{ '/ckeditor5-build-classic/ckeditor.js' }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="{{ asset('assets/js/procesos.js') }}"></script>
+<script src="{{ asset('assets/js/procesos.js?v=1.0.0') }}"></script>
 <script src="{{ asset('js/select.custom.js') }}"></script>
 <script>
     $(document).ready(function () {
