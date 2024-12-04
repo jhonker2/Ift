@@ -431,6 +431,36 @@ for (let item of logFile2) {
     );
 }
 
+const reasignar_tramite = () =>{
+    let usuario =$("#usuario_disponibles").val();
+    let observacion = $("#ip_observacion_reasignar").val();
+    let id_proceso = $("#id_proceso").val();
+    let id_tarea = $("#id_tarea").val();
+    let id_tarea_tramite = $("#id_tarea_tramite_init").val();
+    let id_tramite =$("#id_tramite_init").html();
+    if (usuario==""){
+        alert('Por favor seleccione un usuario para reasignar la tarea');
+        return;
+    }else if (observacion == "") {
+        alert('Por favor ingrese una observacion para poder reasignar');
+        return;
+    }
+    if (!$('#ip_ace_reasignar').prop('checked')) {
+        alert('No ha aceptado la reasignacion');
+        return;
+    }
+    let token = $("#csrf-token").val();
+    let datos = {
+        usuario,
+        observacion,
+        id_proceso,
+        id_tarea,
+        id_tarea_tramite,
+        id_tramite
+    };
+    _AJAX_('/sp_reasignar_tarea', 'POST', token, datos, 14);
+
+}
 
 const devolver_tramite = () => {
 
@@ -456,6 +486,7 @@ const devolver_tramite = () => {
         id_tarea,
     };
     _AJAX_('/sp_devolver_tarea', 'POST', token, datos, 4);
+
 
 
 

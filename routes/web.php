@@ -218,7 +218,8 @@ Route::get('nuevas', [PlanificacionController::class, 'nuevas']);
 /**DEVOLVER TAREA */
 Route::post('sp_devolver_tarea', [PlanificacionController::class, 'sp_devolver_tarea']);
 
-
+/**REASIGNAR TAREA */
+Route::post('sp_reasignar_tarea', [PlanificacionController::class, 'sp_reasignar_tarea']);
 /**GUARDAR TAREA */
 Route::post('sp_guardar_tarea', [PlanificacionController::class, 'sp_guardar_tarea']);
 
@@ -232,6 +233,6 @@ Route::get('sp_download_file/{id_archivo}', [PlanificacionController::class, 'sp
 Route::get('dashboard', [PlanificacionController::class, 'dashboard']);
 Route::get('get_series_fuentes', [PlanificacionController::class, 'get_series_fuentes']);
 Route::get('get_series_tfuentes', [PlanificacionController::class, 'get_series_tfuentes']);
-
+Route::post('Get_tramites_porfecha', [PlanificacionController::class, 'get_ttramites']);
 
 Route::get('email/send', [PlanificacionController::class, 'enviar_correo']);

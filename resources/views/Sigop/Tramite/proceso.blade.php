@@ -26,6 +26,7 @@
             <span id="code_tramite">0</span>
             @endif
             <span class="hide" id="id_tramite_init">{{$tramite }}</span>
+            <input type="hidden" id="id_tarea_tramite_init" value="{{$tarea_tramite}}">
         </div>
         @else
         <div class="breadcrumb-title pe-3 mt-5"><span>#</span>
@@ -224,7 +225,7 @@
             <div class="modal-body">
                 <div class="col-md-12">
                     <label for="single-select-field" class="form-label">Usuario a reasignar</label>
-                    <select class="js-example-basic-single">
+                    <select class="js-example-basic-single" id="usuario_disponibles">
                         <option value="0">Seleccione un usuario</option>
                         @foreach($usuarios as $u)
                         <option value="{{$u->IDENTIFICACION}}">{{$u->NOMBRES}}</option>
@@ -245,7 +246,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                     <button type="button" class="btn btn-primary" id="btn_s_fuente"
-                        onclick="save_fuente()">Guardar</button>
+                        onclick="reasignar_tramite()">Guardar</button>
                 </div>
             </div>
         </div>

@@ -26,6 +26,7 @@ const abrir_tramite = (id) =>{
 }
 
 const _AJAX_ = (ruta, tipo, token, datos, p) =>{
+    
     if (tipo == "POST") {
         $.ajax({
             url: ruta,
@@ -148,6 +149,14 @@ const _AJAX_ = (ruta, tipo, token, datos, p) =>{
                       });
                       grafico_pie(contenedor,titulo,data_p);
                       console.log(data_p);
+
+                }else if(p==14){
+                    Swal.fire(
+                        "Tramite !",
+                        "La tarea fue reasignado de manera correcta.",
+                        "success"
+                    );
+                    window.location.href ='/home';
 
                 }
                 

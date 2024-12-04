@@ -249,7 +249,7 @@ class PlanificacionController extends Controller
         ,[ESTADO_FUNCIONARIO]
         FROM [saftaguas].[dbo].[EMPLEADOS_ACTIVOS_F]  
         ");
-            return view('Sigop.Tramite.proceso', compact('fuentes', 'tiposTramite', 'procesos', 'tareas', 'tramite_data', 'tramite', 'botones', 'init', 'usuarios'));
+            return view('Sigop.Tramite.proceso', compact('fuentes', 'tiposTramite', 'procesos', 'tareas', 'tramite_data', 'tramite', 'botones', 'init', 'usuarios', 'tarea_tramite'));
         } else {
             return Redirect::to('/login');
         }
@@ -1091,6 +1091,38 @@ class PlanificacionController extends Controller
         $id_tarea_devolver = DB::select('select IFNULL(id_tarea_origen, 0) as id_tarea from  tbl_caminos where id_proceso=? and id_tarea_destino=?', [$r->id_proceso, $r->id_tarea]);
 
         return $id_tarea_devolver;
+    }
+
+    public function sp_reasignar_tarea(Request $r)
+    {
+        $date = Carbon::now();
+
+        $tram = DB::table('tbl_tareas_tramites')
+            ->where('id_tramite', $r->id_tramite)
+            ->where('id', $r->id_tarea_tramite)
+            ->update([
+                'estado' => "A",
+            ]);
+        if ($tram > 0) {
+            $tarea_Tramite = DB::table('tbl_tareas_tramites')->insertGetId([
+                "id_tramite" => $r->id_tramite,
+                "id_proceso" => $r->id_proceso,
+                "id_tarea" => $r->id_tarea,
+                "id_usuario" => $r->usuario,
+                "estado" => "E",
+                'fecha_ejecucion' => $date,
+                'fecha_asignacion' => $date,
+
+            ]);
+
+            if ($tarea_Tramite > 0) {
+                return response()->json(["respuesta" => true, 'sms' => "Tarea se reasigno correctamente"]);
+            } else {
+                return response()->json(["respuesta" => false, 'sms' => "Error al Guardar la tarea"]);
+            }
+        } else {
+            return response()->json(["respuesta" => false, 'sms' => "Error al Guardar la tarea"]);
+        }
     }
 
     public function sp_guardar_tarea(Request $r)
