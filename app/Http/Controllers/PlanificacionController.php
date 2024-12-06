@@ -1104,6 +1104,7 @@ class PlanificacionController extends Controller
             ->where('id', $r->id_tarea_tramite)
             ->update([
                 'estado' => "A",
+                'observacion' => $r->observacion
             ]);
         if ($tram > 0) {
             $tarea_Tramite = DB::table('tbl_tareas_tramites')->insertGetId([
@@ -1201,7 +1202,7 @@ class PlanificacionController extends Controller
         date_default_timezone_set("America/Guayaquil");
         //$date = "2024-02-25T12:38:40.435251Z"; //Carbon::now();
         $date = Carbon::now();
-        $usuarios = DB::connection('mysql_aflow')->select('select * from v_usuario_activo');
+        $usuarios = DB::connection('mysql_aflow')->select('select * from v_user_full');
 
         if ($tipo == 2) {
             $compromisos = DB::select('SELECT c.id,c.id_tramite, f.descripcion, tf.descripcion, "dias_retrasado" ,c.fecha_inicio,c.responsable, "empleado","cargo", c.fecha_fin, c.descripcion, c.estado FROM tbl_tramites c
@@ -1252,7 +1253,7 @@ class PlanificacionController extends Controller
         date_default_timezone_set("America/Guayaquil");
         //$date = "2024-02-25T12:38:40.435251Z"; //Carbon::now();
         $date = Carbon::now();
-        $usuarios = DB::connection('mysql_aflow')->select('select * from v_usuario_activo');
+        $usuarios = DB::connection('mysql_aflow')->select('select * from v_user_full');
 
         if ($tipo == 2) {
             $compromisos = DB::select('SELECT c.id,c.id_tramite, f.descripcion, tf.descripcion, "dias_retrasado" ,c.fecha_inicio,c.responsable, "empleado","cargo", c.fecha_fin, c.descripcion, c.estado FROM tbl_tramites c
