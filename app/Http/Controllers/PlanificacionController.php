@@ -41,10 +41,12 @@ class PlanificacionController extends Controller
                 $ejecucion = DB::select('select count(*) as total from tbl_tramites  where estado=1');
                 $vencidos = DB::select('SELECT COUNT(id)  as total from tbl_tramites WHERE ESTADO=1 and fecha_fin < now()');
 
-                $compromisos = DB::select('SELECT c.id,c.id_tramite, f.descripcion, tf.descripcion, "dias_retrasado" ,c.fecha_inicio,c.responsable, "empleado","cargo", c.fecha_fin, c.asunto, c.estado FROM tbl_tramites c
-                INNER JOIN tbl_fuentes f on f.id= c.id_fuente
-                INNER JOIN tbl_tipos_fuentes tf on tf.id = c.id_tipo_fuente
-                WHERE c.estado=1');
+                $compromisos = DB::select('SELECT c.id,c.id_tramite, f.descripcion, tf.descripcion, "dias_retrasado" ,c.fecha_inicio,tt.id_usuario as responsable, "empleado","cargo", c.fecha_fin, c.asunto, c.estado FROM tbl_tramites c
+                    INNER JOIN	tbl_tareas_tramites tt on tt.id_tramite = c.id
+                    INNER JOIN tbl_fuentes f on f.id= c.id_fuente
+                    INNER JOIN tbl_tipos_fuentes tf on tf.id = c.id_tipo_fuente
+                    WHERE c.estado=1
+                    AND tt.estado ="E"');
             } else {
                 $completados = DB::select('select count(*) as total from tbl_tramites  where estado=2 and (responsable=? or usuario_seguimiento = ?)', [Session::get('SESSION_CEDULA'), Session::get('SESSION_CEDULA')]);
                 $ejecucion = DB::select('select count(*) as total from tbl_tramites  where estado=1 and (responsable=? or usuario_seguimiento = ?)', [Session::get('SESSION_CEDULA'), Session::get('SESSION_CEDULA')]);
